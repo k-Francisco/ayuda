@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Charapp</string>
+    <string name="login_button_text">Login</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_member">Already A Member?</string>
+    <string name="create_account">Create Account</string>
+    <string name="view_more_details">VIEW MORE DETAILS</string>
+</resources>
