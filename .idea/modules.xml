@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Charapp.iml" filepath="$PROJECT_DIR$/Charapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Ayuda.iml" filepath="$PROJECT_DIR$/Ayuda.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
