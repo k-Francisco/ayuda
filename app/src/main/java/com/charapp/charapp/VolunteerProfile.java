@@ -3,7 +3,8 @@ package com.charapp.charapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.santillanj.ayuda.R;
+import com.charapp.ayuda.R;
+
 
 public class VolunteerProfile extends AppCompatActivity {
 
