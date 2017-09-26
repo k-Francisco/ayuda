@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://D:/AndroidStudioProjects/ayuda/Ayuda.iml" filepath="D:/AndroidStudioProjects/ayuda/Ayuda.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://D:/AndroidStudioProjects/ayuda/app/app.iml" filepath="D:/AndroidStudioProjects/ayuda/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/ayuda.iml" filepath="$PROJECT_DIR$/ayuda.iml" />
     </modules>
