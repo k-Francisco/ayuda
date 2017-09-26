@@ -22,7 +22,8 @@
             android:name="com.charapp.charapp.VolunteerProfile"
             android:theme="@style/TransparentStatusBar" />
         <!-- <activity android:name="com.charapp.charapp.TestActivity" /> -->
-        <activity android:name="com.charapp.charapp.TestProfile"></activity>
+        <activity android:name="com.charapp.charapp.TestProfile" />
+        <activity android:name="com.charapp.charapp.ViewMyActivityActivity"></activity>
     </application>
 
 </manifest>
