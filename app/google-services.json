@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "596561214268",
+    "firebase_url": "https://ayuda-406d3.firebaseio.com",
+    "project_id": "ayuda-406d3",
+    "storage_bucket": "ayuda-406d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596561214268:android:8ac2f454215f91b5",
+        "android_client_info": {
+          "package_name": "com.santillanj.ayuda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596561214268-n5uvmr63fsqdv7bcob8lng7fdbq509s9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.santillanj.ayuda",
+            "certificate_hash": "cefe87c5456ebb0f285e7c7399ab2bc0e4d4cee8"
+          }
+        },
+        {
+          "client_id": "596561214268-e4fghe5v3ikrqejp38nlqg1im4c01plp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSM6neHauSUHLUcwHGg6Dl02nFHokoYoU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "596561214268-e4fghe5v3ikrqejp38nlqg1im4c01plp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
