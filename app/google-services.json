@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "596561214268-m0mh6kg6cnna3c9djmdrtj5h9t9nsbi9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.santillanj.ayuda",
+            "certificate_hash": "72457210c646fbe1c34ea655d1cdf3b4c6415ec5"
+          }
+        },
+        {
           "client_id": "596561214268-n5uvmr63fsqdv7bcob8lng7fdbq509s9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

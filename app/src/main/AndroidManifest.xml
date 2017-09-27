@@ -23,7 +23,11 @@
             android:theme="@style/TransparentStatusBar" />
         <!-- <activity android:name="com.charapp.charapp.TestActivity" /> -->
         <activity android:name="com.charapp.charapp.TestProfile" />
-        <activity android:name="com.charapp.charapp.ViewMyActivityActivity"></activity>
+        <activity
+            android:name="com.charapp.charapp.ViewMyActivityActivity"
+            android:label="@string/title_activity_view_my_activity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="com.charapp.charapp.CreateActivity"></activity>
     </application>
 
 </manifest>
