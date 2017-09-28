@@ -1,4 +1,4 @@
-package com.charapp.charapp;
+package com.charapp.charapp.ViewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;

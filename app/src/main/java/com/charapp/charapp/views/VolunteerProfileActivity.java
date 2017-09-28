@@ -1,4 +1,4 @@
-package com.charapp.charapp;
+package com.charapp.charapp.views;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.charapp.ayuda.R;
 
 
-public class MainActivity extends AppCompatActivity {
+public class VolunteerProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

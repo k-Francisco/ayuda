@@ -1,10 +1,19 @@
 package com.charapp.charapp.models;
 
+import java.util.List;
+
 /**
  * Created by honey on 9/28/2017.
  */
 
 public class Event {
+    private String activityName;
+    private String date;
+    private String timeStart;
+    private String timeEnd;
+    private String address;
+    private String description;
+    private List<Volunteer> volunteers;
 
     public Event() {
     }
@@ -19,12 +28,6 @@ public class Event {
     }
 
 
-    private String activityName;
-    private String date;
-    private String timeStart;
-    private String timeEnd;
-    private String address;
-    private String description;
 
     public String getActivityName() {
         return activityName;
@@ -74,5 +77,11 @@ public class Event {
         this.description = description;
     }
 
+    public List<Volunteer> getVolunteers() {
+        return volunteers;
+    }
 
+    public void setVolunteers(List<Volunteer> volunteers) {
+        this.volunteers = volunteers;
+    }
 }

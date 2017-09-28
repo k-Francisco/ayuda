@@ -1,9 +1,16 @@
-package com.charapp.charapp;
+package com.charapp.charapp.views;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -14,11 +21,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
+import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.fragments.DatePickerFragment;
 import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -27,6 +41,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     EditText mName, mDate, mTimeStart, mTimeEnd, mAddress, mDesc;
     Button mCreate;
     DatabaseReference dbRef;
+    Calendar calendar = Calendar.getInstance();
+    DateFormat dateFormat;
+    Uri uri;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -59,11 +76,74 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         String desc = mDesc.getText().toString();
 
         Event event = new Event(name, date, timeStart, timeEnd, address, desc);
-        dbRef.child(id).setValue(event);
+
+        UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
+        utilitiesApplication.addEvent(event,dbRef,id);
+
+        putToCalendar(name, timeStart, timeEnd, date, address, desc);
 
         Toast.makeText(this, "Event successfully added", Toast.LENGTH_SHORT).show();
 
         finish();
+
+    }
+
+    private void putToCalendar(String eventName, String timeStart, String timeEnd, String date, String location, String desc){
+        int hourStart = 0;
+        int hourEnd = 0;
+        int minuteStart = 0;
+        int minuteEnd = 0;
+        int monthNumber;
+        int monthDay;
+        int year;
+        String[] splitDate;
+        String[] splitTime;
+        String eventStart;
+        String eventEnd;
+        long startTime;
+        long endTime;
+        dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date parseStart = new Date();
+        Date parseEnd = new Date();
+        ContentResolver contentResolver = this.getContentResolver();
+        ContentValues contentValues = new ContentValues();
+
+        splitTime = timeStart.split(":");
+        hourStart = Integer.parseInt(splitTime[0]);
+        minuteStart = Integer.parseInt(splitTime[1]);
+
+        splitDate = date.split("/");
+        monthNumber = Integer.parseInt(splitDate[0]);
+        monthDay = Integer.parseInt(splitDate[1]);
+        year = Integer.parseInt(splitDate[2]);
+
+        eventStart = (year + "/" + monthNumber + "/" + monthDay + " " + hourStart + ":" + minuteStart + ":" + "00");
+        eventEnd = (year + "/" + monthNumber + "/" + monthDay + " " + hourEnd + ":" + minuteStart + ":" + "00");
+
+        try {
+            parseStart = dateFormat.parse(eventStart);
+            parseEnd = dateFormat.parse(eventEnd);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        startTime = parseStart.getTime();
+        endTime = parseEnd.getTime();
+
+        contentValues.put(CalendarContract.Events.CALENDAR_ID, 1);
+        contentValues.put(CalendarContract.Events.DTSTART, startTime);
+        contentValues.put(CalendarContract.Events.DTEND, endTime);
+        contentValues.put(CalendarContract.Events.TITLE, eventName);
+        contentValues.put(CalendarContract.Events.DESCRIPTION, desc);
+        contentValues.put(CalendarContract.Events.EVENT_LOCATION, location);
+        contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
 
     }
 

@@ -7,6 +7,12 @@
     <string name="create_account">Create Account</string>
     <string name="view_more_details">VIEW MORE DETAILS</string>
 
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="volunteer">Volunteer</string>
+    <string name="foundation">Foundation</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

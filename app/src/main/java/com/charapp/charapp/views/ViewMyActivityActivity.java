@@ -1,4 +1,4 @@
-package com.charapp.charapp;
+package com.charapp.charapp.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.charapp.ayuda.R;
+import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.adapter.EventAdapter;
 import com.charapp.charapp.models.Event;
 import com.google.firebase.database.ChildEventListener;
@@ -65,10 +66,14 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
 //            getSupportActionBar().setTitle(getString(R.string.title_activity_view_activities));
 
+        final UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
         mRef = FirebaseDatabase.getInstance().getReference("activities");
 
         recyclerView = (RecyclerView) findViewById(R.id.events_list);
         recyclerView.setHasFixedSize(true);
+        adapter = new EventAdapter(ViewMyActivityActivity.this, arrayListItem);
+        recyclerView.setAdapter(adapter);
+
         llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
 
@@ -86,18 +91,22 @@ public class ViewMyActivityActivity extends AppCompatActivity
         mRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                getAllEvents(dataSnapshot);
+//                getAllEvents(dataSnapshot);
+                utilitiesApplication.getAllEvents(dataSnapshot, arrayListItem, adapter, getApplicationContext());
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                getAllEvents(dataSnapshot);
+//                getAllEvents(dataSnapshot);
+                utilitiesApplication.getAllEvents(dataSnapshot, arrayListItem, adapter,getApplicationContext());
 
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                deleteEvent(dataSnapshot);
+//                deleteEvent(dataSnapshot);
+                 utilitiesApplication.deleteEvent(dataSnapshot,arrayListItem,getApplicationContext(), adapter);
             }
 
             @Override
@@ -118,7 +127,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
         arrayListItem.add(event);
         adapter = new EventAdapter(ViewMyActivityActivity.this, arrayListItem);
         recyclerView.setAdapter(adapter);
-
     }
 
     private void deleteEvent(DataSnapshot dataSnapshot) {

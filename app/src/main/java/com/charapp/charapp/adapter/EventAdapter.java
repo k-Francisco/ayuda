@@ -2,12 +2,11 @@ package com.charapp.charapp.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.charapp.ayuda.R;
-import com.charapp.charapp.EventViewHolder;
+import com.charapp.charapp.ViewHolder.EventViewHolder;
 import com.charapp.charapp.models.Event;
 
 import java.util.List;
