@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="250dp"
@@ -40,10 +39,10 @@
                 android:id="@+id/image_profile"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/disasters"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/disasters" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,11 +52,13 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/eventName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="haiyan emergency water relief" />
 
                 <TextView
+                    android:id="@+id/eventDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="water charity corp." />
@@ -71,6 +72,7 @@
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
                 android:maxLines="4"
+                android:id="@+id/eventDesc"
                 android:text="The project was initiated to provide aid to stricken areas within days after Typhoon Haiyan hit the Philippines. The biggest problem in Tacloban is a lack of clean drinking water. " />
 
 
@@ -78,11 +80,14 @@
              details nga text nya e invisible ang linear layout nga
              naay mga image view sa ubos-->
             <TextView
+                android:id="@+id/tvViewMore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:textColor="@color/colorAccent"
                 android:text="@string/view_more_details" />
 
 
@@ -90,6 +95,7 @@
              details nga text nya e visible ang linear layout nga
              naay mga image view sa ubos-->
             <LinearLayout
+                android:id="@+id/lLayoutFoundation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -97,22 +103,24 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/ivView"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/dark_eye" />
+                    android:src="@drawable/dark_eye"/>
 
                 <ImageView
+                    android:id="@+id/ivEdit"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
-                    android:src="@drawable/pencil_edit" />
+                    android:src="@drawable/pencil_edit"/>
 
                 <ImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/ivTrash"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/trash" />
+                    android:src="@drawable/trash"/>
 
             </LinearLayout>
 
