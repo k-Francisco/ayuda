@@ -15,11 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.charapp.charapp.views.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.charapp.charapp.views.VolunteerProfileActivity"
@@ -29,8 +25,15 @@
             android:name="com.charapp.charapp.views.ViewMyActivityActivity"
             android:label="@string/title_activity_view_my_activity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.charapp.charapp.views.CreateActivity"/>
-        <activity android:name="com.charapp.charapp.views.RegisterActivity"/>
+        <activity android:name="com.charapp.charapp.views.CreateActivity" />
+        <activity android:name="com.charapp.charapp.views.RegisterActivity" />
+        <activity android:name="com.charapp.charapp.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
