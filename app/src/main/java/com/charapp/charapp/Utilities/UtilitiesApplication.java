@@ -61,15 +61,18 @@ public class UtilitiesApplication extends Application {
         databaseReference.child(id).setValue(event);
     }
 
-    public void deleteEvent(DataSnapshot dataSnapshot, ArrayList<Event> arrayListItem, Context context, EventAdapter adapter){
+    public void deleteEvent(DataSnapshot dataSnapshot, DatabaseReference dbRef, Context context, EventAdapter adapter){
         //TODO deletion of event here including deletion of Firebase event entry
         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-            String eventTitle = singleSnapshot.getValue(String.class);
-            for (int i = 0; i < arrayListItem.size(); i++) {
-                if (arrayListItem.get(i).getActivityName().equals(eventTitle)) {
-                    arrayListItem.remove(i);
-                }
-            }
+            String key = singleSnapshot.getKey();
+            dbRef.child(key).removeValue();
+
+//            String eventTitle = singleSnapshot.getValue(String.class);
+//            for (int i = 0; i < arrayListItem.size(); i++) {
+//                if (arrayListItem.get(i).getActivityName().equals(eventTitle)) {
+//                    arrayListItem.remove(i);
+//                }
+//            }
 //            Log.d(TAG, "Event tile " + eventTitle);
 
         }
@@ -83,8 +86,6 @@ public class UtilitiesApplication extends Application {
         arrayListItem.add(event);
         adapter.notifyDataSetChanged();
     }
-
-
 
     public void joinEvent(Event event, DatabaseReference databaseReference, String id){
         databaseReference.child(id).setValue(event);

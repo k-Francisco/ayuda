@@ -14,9 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.charapp.charapp.views.LoginActivity">
-
-        </activity>
+        <activity android:name="com.charapp.charapp.views.LoginActivity"></activity>
         <activity
             android:name="com.charapp.charapp.views.VolunteerProfileActivity"
             android:theme="@style/TransparentStatusBar" />
@@ -34,6 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.charapp.charapp.views.EventDetailsActivity"></activity>
     </application>
 
 </manifest>

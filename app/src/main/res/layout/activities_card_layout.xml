@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,13 +67,13 @@
 
 
             <TextView
+                android:id="@+id/eventDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/image_profile"
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
                 android:maxLines="4"
-                android:id="@+id/eventDesc"
                 android:text="The project was initiated to provide aid to stricken areas within days after Typhoon Haiyan hit the Philippines. The biggest problem in Tacloban is a lack of clean drinking water. " />
 
 
@@ -87,8 +88,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:clickable="true"
-                android:textColor="@color/colorAccent"
-                android:text="@string/view_more_details" />
+                android:text="@string/view_more_details"
+                android:textColor="@color/colorAccent" />
 
 
             <!--foundation side nga activities kay e invisible ang view
@@ -106,7 +107,7 @@
                     android:id="@+id/ivView"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/dark_eye"/>
+                    android:src="@drawable/dark_eye" />
 
                 <ImageView
                     android:id="@+id/ivEdit"
@@ -114,13 +115,13 @@
                     android:layout_height="24dp"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
-                    android:src="@drawable/pencil_edit"/>
+                    android:src="@drawable/pencil_edit" />
 
                 <ImageView
                     android:id="@+id/ivTrash"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/trash"/>
+                    android:src="@drawable/trash" />
 
             </LinearLayout>
 

@@ -1,9 +1,12 @@
 package com.charapp.charapp.views;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,10 +18,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.charapp.ayuda.R;
 import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.adapter.EventAdapter;
+import com.charapp.charapp.fragments.DatePickerFragment;
+import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -36,11 +43,17 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
     private RecyclerView recyclerView;
     private static ArrayList<Event> arrayListItem = new ArrayList<>();
+    private static ArrayList<String> keysArray = new ArrayList<>();
     private List<Event> result;
     private LinearLayoutManager llm;
     private EventAdapter adapter;
     private DatabaseReference mRef;
+    private static ViewMyActivityActivity viewMyActivity;
+    private ProgressBar progressBar;
+    private ProgressDialog progressDialog;
 
+    public ViewMyActivityActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +81,9 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         final UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
         mRef = FirebaseDatabase.getInstance().getReference("activities");
+        viewMyActivity = this;
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         recyclerView = (RecyclerView) findViewById(R.id.events_list);
         recyclerView.setHasFixedSize(true);
@@ -87,38 +103,9 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        mRef.addChildEventListener(childEventListener);
 
-        mRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                getAllEvents(dataSnapshot);
-                utilitiesApplication.getAllEvents(dataSnapshot, arrayListItem, adapter, getApplicationContext());
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                getAllEvents(dataSnapshot);
-                utilitiesApplication.getAllEvents(dataSnapshot, arrayListItem, adapter,getApplicationContext());
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                deleteEvent(dataSnapshot);
-                 utilitiesApplication.deleteEvent(dataSnapshot,arrayListItem,getApplicationContext(), adapter);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        new ViewMyActivityActivity.Wait().execute();
 
     }
 
@@ -129,22 +116,21 @@ public class ViewMyActivityActivity extends AppCompatActivity
         recyclerView.setAdapter(adapter);
     }
 
-    private void deleteEvent(DataSnapshot dataSnapshot) {
-        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-            String eventTitle = singleSnapshot.getValue(String.class);
-            for (int i = 0; i < arrayListItem.size(); i++) {
-                if (arrayListItem.get(i).getActivityName().equals(eventTitle)) {
-                    arrayListItem.remove(i);
-                }
-            }
-            Log.d(TAG, "Event tile " + eventTitle);
-            adapter.notifyDataSetChanged();
-            adapter = new EventAdapter(ViewMyActivityActivity.this, arrayListItem);
-            recyclerView.setAdapter(adapter);
+    public void deleteEvent(int position) {
+        String clickedKey = keysArray.get(position);
+        mRef.child(clickedKey).removeValue();
 
-        }
     }
 
+    public void updateEvent(Event event, int position) {
+        String clickedKey = keysArray.get(position);
+        mRef.child((clickedKey)).setValue(event);
+    }
+
+    public void viewEvent(){
+        Intent intent = new Intent(this, EventDetailsActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void onBackPressed() {
@@ -203,6 +189,116 @@ public class ViewMyActivityActivity extends AppCompatActivity
         return true;
     }
 
+    public static ViewMyActivityActivity getInstance() {
+        return viewMyActivity;
+    }
 
 
+    public void showDatePickerDialog(View v) {
+        DatePickerFragment newFragment = new DatePickerFragment(v);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment(v);
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    private class Wait extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            showProgressDialog();
+            recyclerView.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ie) {
+                Log.d(TAG, ie.toString());
+            }
+            return (arrayListItem.size() == 0);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bool) {
+            if (bool)
+                updateView();
+        }
+    }
+
+    ChildEventListener childEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            recyclerView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            Event event = dataSnapshot.getValue(Event.class);
+            arrayListItem.add(event);
+            keysArray.add(dataSnapshot.getKey());
+            updateView();
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            String changedKey = dataSnapshot.getKey();
+            int changedIndex = keysArray.indexOf(changedKey);
+            Event event = dataSnapshot.getValue(Event.class);
+            arrayListItem.set(changedIndex, event);
+            updateView();
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            String deletedKey = dataSnapshot.getKey();
+            int removedIndex = keysArray.indexOf(deletedKey);
+            keysArray.remove(removedIndex);
+            arrayListItem.remove(removedIndex);
+            updateView();
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Toast.makeText(getApplicationContext(), "Could not update.", Toast.LENGTH_SHORT).show();
+            adapter.notifyDataSetChanged();
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        arrayListItem.clear();
+        mRef.removeEventListener(childEventListener);
+    }
+
+    public void updateView() {
+        adapter.notifyDataSetChanged();
+        recyclerView.invalidate();
+        progressBar.setVisibility(View.GONE);
+        hideProgressDialog();
+        recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    public void showProgressDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.setIndeterminate(true);
+        }
+
+        progressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
 }

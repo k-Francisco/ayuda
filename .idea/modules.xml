@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://D:\AndroidStudioProjects\ayuda\Ayuda.iml" filepath="D:\AndroidStudioProjects\ayuda\Ayuda.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://D:\AndroidStudioProjects\ayuda\app\app.iml" filepath="D:\AndroidStudioProjects\ayuda\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/ayuda.iml" filepath="$PROJECT_DIR$/ayuda.iml" />
-      <module fileurl="file://D:\AndroidStudioProjects\ayuda\ayuda.iml" filepath="D:\AndroidStudioProjects\ayuda\ayuda.iml" />
     </modules>
   </component>
 </project>

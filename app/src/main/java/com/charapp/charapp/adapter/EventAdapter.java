@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.charapp.ayuda.R;
 import com.charapp.charapp.ViewHolder.EventViewHolder;
 import com.charapp.charapp.models.Event;
@@ -25,7 +26,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         EventViewHolder viewHolder;
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activities_card_layout, parent, false);
-        viewHolder = new EventViewHolder(layoutView, eventsList);
+        viewHolder = new EventViewHolder(context, layoutView, eventsList);
 
         return viewHolder;
     }
@@ -33,7 +34,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     @Override
     public void onBindViewHolder(final EventViewHolder holder, int position) {
-
+        holder.mCardView.setTag(position);
         holder.tvName.setText(eventsList.get(position).getActivityName());
         holder.tvDate.setText(eventsList.get(position).getDate());
         holder.tvDesc.setText(eventsList.get(position).getDescription());
@@ -44,8 +45,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     public int getItemCount() {
         return this.eventsList.size();
     }
-
-
 
 
 }
