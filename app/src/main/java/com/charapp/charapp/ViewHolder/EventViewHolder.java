@@ -27,7 +27,7 @@ import com.charapp.charapp.fragments.DatePickerFragment;
 import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
 import com.charapp.charapp.views.CreateActivity;
-import com.charapp.charapp.views.EventDetailsActivity;
+
 import com.charapp.charapp.views.ViewMyActivityActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

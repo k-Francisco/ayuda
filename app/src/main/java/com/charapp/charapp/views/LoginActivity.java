@@ -34,11 +34,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        getSupportActionBar().hide();
         setContentView(R.layout.login_layout);
 
         email = (EditText) findViewById(R.id.etLoginEmail);
@@ -80,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     });
         }catch (IllegalArgumentException e){
+            progressDialog.hide();
             Toast.makeText(this, "Please input email and password", Toast.LENGTH_SHORT).show();
         }
     }

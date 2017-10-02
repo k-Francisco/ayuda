@@ -41,11 +41,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        getSupportActionBar().hide();
         setContentView(R.layout.register_layout);
         progressDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
@@ -87,24 +82,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
 
-                                    Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
-                                    progressDialog.hide();
+                                Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
+                                progressDialog.hide();
 
-                                    if (userIdentity.equals("Volunteer")) {
-                                        Volunteer volunteer = new Volunteer();
-                                        volunteer.setVolunteerEmail(userEmail);
-                                        volunteer.setVolunteerName(userFullName);
-                                        databaseVolunteer.child(volunteerId).setValue(volunteer);
-                                    } else if (userIdentity.equals("Foundation")) {
-                                        Foundation foundation = new Foundation();
-                                        foundation.setRepresentativeEmail(userEmail);
-                                        foundation.setRepresentativeName(userFullName);
-                                        databaseFoundation.child(foundationId).setValue(foundation);
-                                    }
+                                if (userIdentity.equals("Volunteer")) {
+                                    Volunteer volunteer = new Volunteer();
+                                    volunteer.setVolunteerEmail(userEmail);
+                                    volunteer.setVolunteerName(userFullName);
+                                    databaseVolunteer.child(volunteerId).setValue(volunteer);
+                                } else if (userIdentity.equals("Foundation")) {
+                                    Foundation foundation = new Foundation();
+                                    foundation.setRepresentativeEmail(userEmail);
+                                    foundation.setRepresentativeName(userFullName);
+                                    databaseFoundation.child(foundationId).setValue(foundation);
+                                }
 
-                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
 
                             } else {
                                 Toast.makeText(RegisterActivity.this, "Could not register user. " +task.getException().getMessage(), Toast.LENGTH_SHORT).show();
