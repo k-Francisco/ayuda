@@ -128,8 +128,8 @@ public class ViewMyActivityActivity extends AppCompatActivity
     }
 
     public void viewEvent(){
-        Intent intent = new Intent(this, EventDetailsActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, EventDetailsActivity.class);
+//        startActivity(intent);
     }
 
     @Override
