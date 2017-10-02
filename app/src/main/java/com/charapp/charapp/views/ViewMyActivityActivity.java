@@ -127,8 +127,9 @@ public class ViewMyActivityActivity extends AppCompatActivity
         mRef.child((clickedKey)).setValue(event);
     }
 
-    public void viewEvent(){
+    public void viewEvent(Bundle bundle, int position) {
         Intent intent = new Intent(this, EventDetailsActivity.class);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 

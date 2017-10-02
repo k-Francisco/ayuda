@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -79,7 +80,15 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         mViewIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ViewMyActivityActivity.getInstance().viewEvent();
+                Bundle bundle = new Bundle();
+                bundle.putString("NAME", eventObject.get(position).getActivityName());
+                bundle.putString("DATE", eventObject.get(position).getDate());
+                bundle.putString("START", eventObject.get(position).getTimeStart());
+                bundle.putString("END", eventObject.get(position).getTimeEnd());
+                bundle.putString("ADDRESS", eventObject.get(position).getAddress());
+                bundle.putString("DESC", eventObject.get(position).getDescription());
+
+                ViewMyActivityActivity.getInstance().viewEvent(bundle, position);
 
             }
         });
