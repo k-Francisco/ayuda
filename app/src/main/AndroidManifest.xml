@@ -25,7 +25,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.charapp.charapp.views.CreateActivity" />
         <activity android:name="com.charapp.charapp.views.RegisterActivity" />
-        <activity android:name="com.charapp.charapp.SplashActivity">
+        <activity android:name="com.charapp.charapp.views.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -77,8 +77,7 @@ public class UtilitiesApplication extends Application {
 
         }
         adapter.notifyDataSetChanged();
-
-
+        
     }
 
     public void getAllEvents(DataSnapshot dataSnapshot, ArrayList<Event> arrayListItem, EventAdapter adapter, Context context) {

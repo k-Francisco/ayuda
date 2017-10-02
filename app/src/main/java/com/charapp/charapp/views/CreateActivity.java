@@ -4,14 +4,20 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -38,12 +44,18 @@ import java.util.Date;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class CreateActivity extends AppCompatActivity implements View.OnClickListener {
 
-    EditText mName, mDate, mTimeStart, mTimeEnd, mAddress, mDesc;
-    Button mCreate;
-    DatabaseReference dbRef;
-    Calendar calendar = Calendar.getInstance();
-    DateFormat dateFormat;
-    Uri uri;
+    private EditText mName, mDate, mTimeStart, mTimeEnd, mAddress, mDesc;
+    private Button mCreate;
+    private DatabaseReference dbRef;
+    private Calendar calendar = Calendar.getInstance();
+    private DateFormat dateFormat;
+    private Uri uri;
+    private static final int PERMISSION_CALLBACK_CONSTANT = 100;
+    private static final int REQUEST_PERMISSION_SETTING = 101;
+    private SharedPreferences permissionStatus;
+    private boolean sentToSettings = false;
+    private String[] permissionsRequired = new String[]{Manifest.permission.READ_CALENDAR,
+            Manifest.permission.WRITE_CALENDAR};
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -59,7 +71,75 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         findViews();
         mCreate.setOnClickListener(this);
 
+        checkCalendarPermissions();
+
     }
+
+    private void checkCalendarPermissions(){
+        if(ActivityCompat.checkSelfPermission(CreateActivity.this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
+                ||ActivityCompat.checkSelfPermission(CreateActivity.this, permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(CreateActivity.this, permissionsRequired[0])
+                    ||ActivityCompat.shouldShowRequestPermissionRationale(CreateActivity.this, permissionsRequired[1])){
+
+                //Show why we need multiple permissions
+                AlertDialog.Builder builder = new AlertDialog.Builder(CreateActivity.this);
+                builder.setTitle("Need Multiple Permissions");
+                builder.setMessage("This app needs Calendar permissions");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                        ActivityCompat.requestPermissions(CreateActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+
+                    }
+                });
+                builder.show();
+            }else if (permissionStatus.getBoolean(permissionsRequired[0], false)){
+                //Previously Permissions Request was cancelled with "Don't ask again"
+                //Redirect to Settings after showing information about why we need the permission
+                AlertDialog.Builder builder = new AlertDialog.Builder(CreateActivity.this);
+                builder.setTitle("Need multiple permissions");
+                builder.setMessage("This app needs Calendar and Location permissions");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                        sentToSettings = true;
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+                        Toast.makeText(getBaseContext(), "Go to Permissions to Ok Calendar and Location", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+
+                    }
+                });
+                builder.show();
+            }else{
+                ActivityCompat.requestPermissions(CreateActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+            }
+
+            permissionStatus = getSharedPreferences("permissions", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = permissionStatus.edit();
+            editor.putBoolean(permissionsRequired[0], true);
+            editor.commit();
+        }
+    }
+
+
 
     private void createActivity() {
         if (!validateForm()) {
