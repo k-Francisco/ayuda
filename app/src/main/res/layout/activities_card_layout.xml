@@ -56,7 +56,11 @@
                     android:id="@+id/eventName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="haiyan emergency water relief" />
+                    android:text="haiyan emergency water relief"
+                    android:textAllCaps="true"
+                    android:textColor="@color/cardview_dark_background"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/eventDate"
