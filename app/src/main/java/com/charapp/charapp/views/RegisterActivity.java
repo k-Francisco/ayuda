@@ -100,8 +100,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     databaseVolunteer.child(volunteerId).setValue(volunteer);
                                 } else if (userIdentity.equals("Foundation")) {
                                     Foundation foundation = new Foundation();
-                                    foundation.setRepresentativeEmail(userEmail);
-                                    foundation.setRepresentativeName(userFullName);
+                                    foundation.setFoundationEmail(userEmail);
+                                    foundation.setFoundationName(userFullName);
                                     databaseFoundation.child(foundationId).setValue(foundation);
                                 }
 

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
@@ -27,30 +29,54 @@ import com.charapp.charapp.adapter.EventAdapter;
 import com.charapp.charapp.fragments.DatePickerFragment;
 import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
+import com.charapp.charapp.models.Foundation;
+import com.charapp.charapp.models.Volunteer;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMyActivityActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     private static String TAG = ViewMyActivityActivity.class.getSimpleName();
 
     private RecyclerView recyclerView;
     private static ArrayList<Event> arrayListItem = new ArrayList<>();
+    private static ArrayList<Foundation> alFoundation = new ArrayList<>();
+    private static ArrayList<Volunteer> alVolunteer = new ArrayList<>();
     private static ArrayList<String> keysArray = new ArrayList<>();
     private List<Event> result;
     private LinearLayoutManager llm;
     private EventAdapter adapter;
+    private FirebaseAuth mAuth;
     private DatabaseReference mRef;
+    private DatabaseReference mFoundationRef;
+    private DatabaseReference mVolunteerRef;
     private static ViewMyActivityActivity viewMyActivity;
     private ProgressBar progressBar;
     private ProgressDialog progressDialog;
+    private ChildEventListener cel;
+    private ChildEventListener celVolunteer;
+    private ArrayList<Event> al = new ArrayList<>();
+    private FirebaseDatabase fdb;
+    private FirebaseUser user;
+    private String userEmail;
+    private String userName;
+    private String userIdentity = "";
+    private NavigationView navigationView;
+    private TextView tvDisplayName;
+    private TextView tvDisplayEmail;
 
     public ViewMyActivityActivity() {
     }
@@ -62,17 +88,98 @@ public class ViewMyActivityActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//       check if foundation/volunteer side {
-        getSupportActionBar().setTitle(getString(R.string.title_activity_view_my_activity));
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+//       check if foundation/volunteer side {
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        userEmail = user.getEmail();
+
+
+        fdb = FirebaseDatabase.getInstance();
+        mFoundationRef = fdb.getReference("foundation");
+
+        cel = new ChildEventListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ViewMyActivityActivity.this, CreateActivity.class);
-                startActivity(intent);
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+
+                Foundation foundation = dataSnapshot.getValue(Foundation.class);
+                alFoundation.add(foundation);
+
+                for (int i = 0; i < alFoundation.size(); i++) {
+
+                    if(alFoundation.get(i).getFoundationEmail().equals(userEmail)){
+                        userIdentity = "foundation";
+                        userName = alFoundation.get(i).getFoundationName();
+                    }
+                }
+
+
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(userName)
+                        .build();
+
+                user.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                }
+                            }
+                        });
+
+                if(userIdentity.equals("")){
+                    userIdentity = "volunteer";
+
+                }
+
+
+
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(ViewMyActivityActivity.this, CreateActivity.class);
+                        intent.putExtra("email", userEmail);
+                        intent.putExtra("name", userName);
+                        startActivity(intent);
+                    }
+                });
+
+                if(userIdentity.equals("volunteer")){
+                    fab.hide();
+                    getSupportActionBar().setTitle(getString(R.string.title_activity_view_activities));
+                }else{
+                    fab.show();
+                    getSupportActionBar().setTitle(getString(R.string.title_activity_view_my_activity));
+                }
+
+
             }
-        });
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        };
+        mFoundationRef.addChildEventListener(cel);
+
 
 //        }
 //        else
@@ -81,6 +188,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         final UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
         mRef = FirebaseDatabase.getInstance().getReference("activities");
+
         viewMyActivity = this;
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -103,11 +211,20 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        tvDisplayName = header.findViewById(R.id.tvName);
+        tvDisplayName.setText(user.getDisplayName());
+        tvDisplayEmail = header.findViewById(R.id.tvEmail);
+        tvDisplayEmail.setText(user.getEmail());
+
+
         mRef.addChildEventListener(childEventListener);
 
         new ViewMyActivityActivity.Wait().execute();
 
     }
+
+
 
     private void getAllEvents(DataSnapshot dataSnapshot) {
         Event event = dataSnapshot.getValue(Event.class);
@@ -179,10 +296,11 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_logout){
+            mAuth.signOut();
+            Intent intent = new Intent(ViewMyActivityActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -204,6 +322,8 @@ public class ViewMyActivityActivity extends AppCompatActivity
         DialogFragment newFragment = new TimePickerFragment(v);
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
+
+
 
     private class Wait extends AsyncTask<Void, Void, Boolean> {
         @Override
@@ -236,7 +356,8 @@ public class ViewMyActivityActivity extends AppCompatActivity
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             recyclerView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-            Event event = dataSnapshot.getValue(Event.class);
+            Event event;
+            event = dataSnapshot.getValue(Event.class);
             arrayListItem.add(event);
             keysArray.add(dataSnapshot.getKey());
             updateView();

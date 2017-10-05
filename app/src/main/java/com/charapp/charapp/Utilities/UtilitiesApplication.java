@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.charapp.charapp.adapter.EventAdapter;
 import com.charapp.charapp.models.Event;
+import com.charapp.charapp.models.Foundation;
 import com.charapp.charapp.views.ViewMyActivityActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,6 +61,9 @@ public class UtilitiesApplication extends Application {
     public void addEvent(Event event, DatabaseReference databaseReference, String id){
         databaseReference.child(id).setValue(event);
     }
+    public void addEvent(Foundation foundation, DatabaseReference databaseReference, String id){
+        databaseReference.child(id).setValue(foundation);
+    }
 
     public void deleteEvent(DataSnapshot dataSnapshot, DatabaseReference dbRef, Context context, EventAdapter adapter){
         //TODO deletion of event here including deletion of Firebase event entry
@@ -77,7 +81,7 @@ public class UtilitiesApplication extends Application {
 
         }
         adapter.notifyDataSetChanged();
-        
+
     }
 
     public void getAllEvents(DataSnapshot dataSnapshot, ArrayList<Event> arrayListItem, EventAdapter adapter, Context context) {

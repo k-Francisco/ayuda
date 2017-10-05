@@ -13,9 +13,20 @@ public class Event {
     private String timeEnd;
     private String address;
     private String description;
-    private List<Volunteer> volunteers;
+    private Foundation foundation;
+//    private List<Volunteer> volunteers;
 
     public Event() {
+    }
+
+    public Event(String activityName, String date, String timeStart, String timeEnd, String address, String description, Foundation foundation) {
+        this.activityName = activityName;
+        this.date = date;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.address = address;
+        this.description = description;
+        this.foundation = foundation;
     }
 
     public Event(String activityName, String date, String timeStart, String timeEnd, String address, String description) {
@@ -77,11 +88,19 @@ public class Event {
         this.description = description;
     }
 
-    public List<Volunteer> getVolunteers() {
-        return volunteers;
+    public Foundation getFoundation() {
+        return foundation;
     }
 
-    public void setVolunteers(List<Volunteer> volunteers) {
-        this.volunteers = volunteers;
+    public void setFoundation(Foundation foundation) {
+        this.foundation = foundation;
     }
+
+    //    public List<Volunteer> getVolunteers() {
+//        return volunteers;
+//    }
+//
+//    public void setVolunteers(List<Volunteer> volunteers) {
+//        this.volunteers = volunteers;
+//    }
 }
