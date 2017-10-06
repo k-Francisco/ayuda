@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
+import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -69,12 +70,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             if (task.isSuccessful()) {
                                 progressDialog.hide();
+                                progressDialog.dismiss();
+
+                                ((UtilitiesApplication)getApplication()).getEditor().putString("email", userEmail);
+                                ((UtilitiesApplication)getApplication()).getEditor().putString("password", userPass);
+                                ((UtilitiesApplication)getApplication()).getEditor().commit();
+
                                 Intent intent = new Intent(LoginActivity.this, ViewMyActivityActivity.class);
                                 startActivity(intent);
                                 finish();
 
                             } else {
                                 progressDialog.hide();
+                                progressDialog.dismiss();
                                 Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
 

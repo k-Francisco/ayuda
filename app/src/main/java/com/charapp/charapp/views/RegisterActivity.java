@@ -112,6 +112,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             } else {
                                 Toast.makeText(RegisterActivity.this, "Could not register user. " +task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 progressDialog.hide();
+                                progressDialog.dismiss();
                             }
                         }
                     });

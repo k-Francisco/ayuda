@@ -2,6 +2,8 @@ package com.charapp.charapp.Utilities;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -25,12 +27,24 @@ public class UtilitiesApplication extends Application {
     private UtilitiesApplication mInstance;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
+    private SharedPreferences sharedpreferences;
+    private SharedPreferences.Editor editor;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        sharedpreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = sharedpreferences.edit();
+    }
+
+    public SharedPreferences getSharedpreferences() {
+        return sharedpreferences;
+    }
+
+    public SharedPreferences.Editor getEditor() {
+        return editor;
     }
 
     public UtilitiesApplication getmInstance() {
