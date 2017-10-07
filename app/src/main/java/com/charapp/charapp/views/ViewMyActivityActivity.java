@@ -205,7 +205,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 
@@ -231,6 +231,8 @@ public class ViewMyActivityActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -247,6 +249,10 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
+
+            ((UtilitiesApplication)getApplication()).getEditor().clear();
+            ((UtilitiesApplication)getApplication()).getEditor().commit();
+
             Intent intent = new Intent(ViewMyActivityActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
