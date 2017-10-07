@@ -16,17 +16,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     private List<Event> eventsList;
     private Context context;
+    private String identity;
 
-    public EventAdapter(Context context, List<Event> eventsList) {
+    public EventAdapter(Context context, List<Event> eventsList, String identity) {
         this.eventsList = eventsList;
         this.context = context;
+        this.identity = identity;
     }
 
     @Override
     public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         EventViewHolder viewHolder;
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activities_card_layout, parent, false);
-        viewHolder = new EventViewHolder(context, layoutView, eventsList);
+        viewHolder = new EventViewHolder(context, layoutView, eventsList, identity);
 
         return viewHolder;
     }

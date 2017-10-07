@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Ayuda.iml" filepath="$PROJECT_DIR$/Ayuda.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ayuda.iml" filepath="$PROJECT_DIR$/ayuda.iml" />
       <module fileurl="file://$PROJECT_DIR$/ayuda.iml" filepath="$PROJECT_DIR$/ayuda.iml" />
     </modules>
   </component>

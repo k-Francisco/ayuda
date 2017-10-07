@@ -1,7 +1,6 @@
 package com.charapp.charapp.views;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -56,6 +55,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private boolean sentToSettings = false;
     private String[] permissionsRequired = new String[]{Manifest.permission.READ_CALENDAR,
             Manifest.permission.WRITE_CALENDAR};
+    private String foundationName;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -66,7 +66,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         getSupportActionBar().setTitle(getString(R.string.title_create_activity));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        dbRef = FirebaseDatabase.getInstance().getReference("activities");
+        Bundle bundle = getIntent().getExtras();
+        foundationName = bundle.getString("foundationName");
+        Toast.makeText(this, foundationName, Toast.LENGTH_SHORT).show();
+        dbRef = FirebaseDatabase.getInstance().getReference("activities/"+foundationName);
 
         findViews();
         mCreate.setOnClickListener(this);
@@ -138,8 +141,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             editor.commit();
         }
     }
-
-
 
     private void createActivity() {
         if (!validateForm()) {

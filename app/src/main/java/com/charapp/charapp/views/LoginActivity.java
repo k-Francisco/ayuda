@@ -14,10 +14,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
+import com.charapp.charapp.models.Foundation;
+import com.charapp.charapp.models.Volunteer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by dobit on 9/27/2017.
@@ -30,6 +40,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView register;
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
+    private DatabaseReference mFoundationRef, mVolunteerRef;
+    private ChildEventListener celF, celV;
+    private static ArrayList<Foundation> alFoundation = new ArrayList<>();
+    private static ArrayList<Volunteer> alVolunteer = new ArrayList<>();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +66,65 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         register.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
+
+        mFoundationRef = FirebaseDatabase.getInstance().getReference("foundation");
+        mVolunteerRef = FirebaseDatabase.getInstance().getReference("volunteer");
+
+    }
+
+    private void checkUserIdentity(final String userEmail) {
+
+        mFoundationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String userIdentity, mEmail;
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    mEmail = ds.getValue(Foundation.class).getFoundationEmail();
+
+                    if (mEmail != null && mEmail.equals(userEmail)) {
+                        userIdentity = "foundation";
+                        Intent intent = new Intent(LoginActivity.this, ViewMyActivityActivity.class);
+                        intent.putExtra("IDENTITY", userIdentity);
+                        intent.putExtra("NAME", ds.getValue(Foundation.class).getFoundationName());
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mVolunteerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String userIdentity, mEmail;
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    mEmail = ds.getValue(Volunteer.class).getVolunteerEmail();
+
+                    if (mEmail != null && mEmail.equals(userEmail)) {
+                        userIdentity = "volunteer";
+                        Intent intent = new Intent(LoginActivity.this, ViewMyActivityActivity.class);
+                        intent.putExtra("IDENTITY", userIdentity);
+                        intent.putExtra("NAME", ds.getValue(Volunteer.class).getVolunteerName());
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 
@@ -69,10 +143,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             if (task.isSuccessful()) {
                                 progressDialog.hide();
-                                Intent intent = new Intent(LoginActivity.this, ViewMyActivityActivity.class);
-                                startActivity(intent);
-                                finish();
-
+                                checkUserIdentity(userEmail);
                             } else {
                                 progressDialog.hide();
                                 Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -80,19 +151,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         }
                     });
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             Toast.makeText(this, "Please input email and password", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void goToRegisterActivity(){
+    private void goToRegisterActivity() {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnLogin:
                 loginUser();
                 break;

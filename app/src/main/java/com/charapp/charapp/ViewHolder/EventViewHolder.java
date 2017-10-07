@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,14 +50,16 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     private List<Event> eventObject;
     private Context context;
     private int position;
+    private String identity;
     UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
     DatabaseReference dbRef;
 
 
-    public EventViewHolder(final Context context, final View itemView, final List<Event> eventObject) {
+    public EventViewHolder(final Context context, final View itemView, final List<Event> eventObject, String identity) {
         super(itemView);
         this.context = context;
         this.eventObject = eventObject;
+        this.identity = identity;
 
         mCardView = (CardView) itemView.findViewById(R.id.card_view);
         mCardView.setOnClickListener(new View.OnClickListener() {
@@ -157,13 +160,17 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         });
 
 
-        //check if foundation/volunteer side para ma determine if ang layout/textview ang e hide
 
-//            LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.lLayoutFoundation);
-//            ll.setVisibility(View.GONE);
+        if(identity.equals("foundation")){
+            tvViewMore = (TextView) itemView.findViewById(R.id.tvViewMore);
+            tvViewMore.setVisibility(View.INVISIBLE);
+        }else if(identity.equals("volunteer")){
+            LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.lLayoutFoundation);
+            ll.setVisibility(View.GONE);
+        }
 
-        tvViewMore = (TextView) itemView.findViewById(R.id.tvViewMore);
-        tvViewMore.setVisibility(View.INVISIBLE);
+
+
 
 
     }
