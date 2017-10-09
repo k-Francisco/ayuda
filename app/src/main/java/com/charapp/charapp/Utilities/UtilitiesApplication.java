@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -29,6 +30,7 @@ public class UtilitiesApplication extends Application {
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedpreferences;
     private SharedPreferences.Editor editor;
+    private NotificationCompat.Builder notification;
 
 
     @Override
@@ -37,6 +39,13 @@ public class UtilitiesApplication extends Application {
         mInstance = this;
         sharedpreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedpreferences.edit();
+        notification = new NotificationCompat.Builder(this);
+        notification.setAutoCancel(true);
+    }
+
+
+    public NotificationCompat.Builder getNotification() {
+        return notification;
     }
 
     public SharedPreferences getSharedpreferences() {

@@ -1,6 +1,8 @@
 package com.charapp.charapp.views;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -136,7 +139,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         putToCalendar(name, timeStart, timeEnd, date, address, desc);
 
         Toast.makeText(this, "Event successfully added", Toast.LENGTH_SHORT).show();
-
         finish();
 
     }
