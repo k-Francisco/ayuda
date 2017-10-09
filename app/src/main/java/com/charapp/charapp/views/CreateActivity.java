@@ -68,7 +68,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         Bundle bundle = getIntent().getExtras();
         foundationName = bundle.getString("foundationName");
-        Toast.makeText(this, foundationName, Toast.LENGTH_SHORT).show();
         dbRef = FirebaseDatabase.getInstance().getReference("activities/"+foundationName);
 
         findViews();
@@ -94,33 +93,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.cancel();
                         ActivityCompat.requestPermissions(CreateActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-
-                    }
-                });
-                builder.show();
-            }else if (permissionStatus.getBoolean(permissionsRequired[0], false)){
-                //Previously Permissions Request was cancelled with "Don't ask again"
-                //Redirect to Settings after showing information about why we need the permission
-                AlertDialog.Builder builder = new AlertDialog.Builder(CreateActivity.this);
-                builder.setTitle("Need multiple permissions");
-                builder.setMessage("This app needs Calendar and Location permissions");
-                builder.setCancelable(false);
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                        sentToSettings = true;
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-                        Toast.makeText(getBaseContext(), "Go to Permissions to Ok Calendar and Location", Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

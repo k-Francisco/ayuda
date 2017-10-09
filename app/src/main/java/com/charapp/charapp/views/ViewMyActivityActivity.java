@@ -86,6 +86,9 @@ public class ViewMyActivityActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Bundle bundle = getIntent().getExtras();
+
+//        userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
+//        fName = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("name", "");
         userIdentity = bundle.getString("IDENTITY");
         fName = bundle.getString("NAME");
 

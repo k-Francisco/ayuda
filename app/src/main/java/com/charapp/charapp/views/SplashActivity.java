@@ -33,6 +33,8 @@ public class SplashActivity extends AppCompatActivity {
     private ImageView logo;
     private String userEmail;
     private String userPassword;
+    private String userIdentity;
+    private String fName;
 
 
 
@@ -44,8 +46,13 @@ public class SplashActivity extends AppCompatActivity {
         userEmail = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("email", "");
         userPassword = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("password", "");
 
-        if(!userEmail.equals("") && !userPassword.equals("")){
+        userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
+        fName = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("name", "");
+
+        if(!userEmail.equals("") && !userPassword.equals("") && !userIdentity.equals("") && !fName.equals("")){
             Intent intent = new Intent(SplashActivity.this, ViewMyActivityActivity.class);
+            intent.putExtra("IDENTITY", userIdentity);
+            intent.putExtra("NAME", fName);
             startActivity(intent);
         }
 

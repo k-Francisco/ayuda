@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
+import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.models.Foundation;
 import com.charapp.charapp.models.Volunteer;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -84,6 +85,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     if (mEmail != null && mEmail.equals(userEmail)) {
                         userIdentity = "foundation";
+                        ((UtilitiesApplication)getApplication()).getEditor().putString("identity", userIdentity);
+                        ((UtilitiesApplication)getApplication()).getEditor().putString("name", ds.getValue(Foundation.class).getFoundationName());
+                        ((UtilitiesApplication)getApplication()).getEditor().commit();
                         Intent intent = new Intent(LoginActivity.this, ViewMyActivityActivity.class);
                         intent.putExtra("IDENTITY", userIdentity);
                         intent.putExtra("NAME", ds.getValue(Foundation.class).getFoundationName());
@@ -110,6 +114,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     if (mEmail != null && mEmail.equals(userEmail)) {
                         userIdentity = "volunteer";
+                        ((UtilitiesApplication)getApplication()).getEditor().putString("identity", userIdentity);
+                        ((UtilitiesApplication)getApplication()).getEditor().putString("name", ds.getValue(Volunteer.class).getVolunteerName());
+                        ((UtilitiesApplication)getApplication()).getEditor().commit();
+
                         Intent intent = new Intent(LoginActivity.this, ViewMyActivityActivity.class);
                         intent.putExtra("IDENTITY", userIdentity);
                         intent.putExtra("NAME", ds.getValue(Volunteer.class).getVolunteerName());
@@ -143,6 +151,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             if (task.isSuccessful()) {
                                 progressDialog.hide();
+                                progressDialog.dismiss();
+                                ((UtilitiesApplication)getApplication()).getEditor().putString("email", userEmail);
+                                ((UtilitiesApplication)getApplication()).getEditor().putString("password", userPass);
+                                ((UtilitiesApplication)getApplication()).getEditor().commit();
                                 checkUserIdentity(userEmail);
                             } else {
                                 progressDialog.hide();
