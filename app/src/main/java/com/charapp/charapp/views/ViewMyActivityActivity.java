@@ -41,7 +41,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class ViewMyActivityActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -53,6 +52,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
     private static ArrayList<Foundation> alFoundation = new ArrayList<>();
     private static ArrayList<Volunteer> alVolunteer = new ArrayList<>();
     private static ArrayList<String> keysArray = new ArrayList<>();
+    private static ArrayList<String> foundations = new ArrayList<>();
     private List<Event> result;
     private LinearLayoutManager llm;
     private EventAdapter adapter;
@@ -117,13 +117,14 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         } else if (userIdentity.equals("volunteer")) {
             getSupportActionBar().setTitle(getString(R.string.title_activity_view_activities));
+            setView(fName);
         }
 
 
     }
 
     private void setView(String key) {
-        mRef = mRef.child(key);
+
         final UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
         viewMyActivity = this;
 
@@ -153,10 +154,42 @@ public class ViewMyActivityActivity extends AppCompatActivity
         tvDisplayEmail = header.findViewById(R.id.tvEmail);
         tvDisplayEmail.setText(user.getEmail());
 
+        if (userIdentity.equals("foundation")) {
+            mRef = mRef.child(key);
+            mRef.addChildEventListener(childEventListener);
 
-        mRef.addChildEventListener(childEventListener);
+        } else {
+            foundations = retrieve();
+            for (int i = 0; i < foundations.size(); i++) {
+                mRef.child(foundations.get(i)).addChildEventListener(childEventListener);
+            }
+        }
+
 
         new ViewMyActivityActivity.Wait().execute();
+    }
+
+    private ArrayList<String> retrieve() {
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                fetchFoundations(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return foundations;
+    }
+
+    private void fetchFoundations(DataSnapshot dataSnapshot) {
+        foundations.clear();
+        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//            String name = ds.getValue(Foundation.class).getFoundationName();
+            foundations.add(ds.getKey());
+        }
     }
 
     private void getAllEvents(DataSnapshot dataSnapshot) {
@@ -216,7 +249,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
     }
 
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -234,8 +266,8 @@ public class ViewMyActivityActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
 
-            ((UtilitiesApplication)getApplication()).getEditor().clear();
-            ((UtilitiesApplication)getApplication()).getEditor().commit();
+            ((UtilitiesApplication) getApplication()).getEditor().clear();
+            ((UtilitiesApplication) getApplication()).getEditor().commit();
 
             Intent intent = new Intent(ViewMyActivityActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -292,39 +324,14 @@ public class ViewMyActivityActivity extends AppCompatActivity
     ChildEventListener childEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            if(userIdentity.equals("foundation")){
             recyclerView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             Event event;
             event = dataSnapshot.getValue(Event.class);
             arrayListItem.add(event);
             keysArray.add(dataSnapshot.getKey());
-            updateView();}
-            else {
+            updateView();
 
-                mFoundationRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        recyclerView.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.VISIBLE);
-                        Event event;
-
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            String key = ds.getValue(Foundation.class).getFoundationName();
-                            event = dataSnapshot.getValue(Event.class);
-                            arrayListItem.add(event);
-                            keysArray.add(key);
-                        }
-                        updateView();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
         }
 
         @Override

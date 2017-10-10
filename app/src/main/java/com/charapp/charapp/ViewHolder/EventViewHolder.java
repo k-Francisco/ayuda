@@ -67,8 +67,15 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         tvViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "insert 'view more' actions here", Toast.LENGTH_LONG).show();
-            }
+                Bundle bundle = new Bundle();
+                bundle.putString("NAME", eventObject.get(position).getActivityName());
+                bundle.putString("DATE", eventObject.get(position).getDate());
+                bundle.putString("START", eventObject.get(position).getTimeStart());
+                bundle.putString("END", eventObject.get(position).getTimeEnd());
+                bundle.putString("ADDRESS", eventObject.get(position).getAddress());
+                bundle.putString("DESC", eventObject.get(position).getDescription());
+
+                ViewMyActivityActivity.getInstance().viewEvent(bundle, position);            }
         });
 
         mViewIcon = (ImageView) itemView.findViewById(R.id.ivView);
