@@ -1,8 +1,6 @@
 package com.charapp.charapp.views;
 
 import android.Manifest;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,22 +8,25 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.provider.Settings;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
@@ -33,9 +34,15 @@ import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.fragments.DatePickerFragment;
 import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,12 +53,14 @@ import java.util.Date;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class CreateActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int PICK_IMAGE_REQUEST = 234;
     private EditText mName, mDate, mTimeStart, mTimeEnd, mAddress, mDesc;
+    private ImageButton mImage;
     private Button mCreate;
     private DatabaseReference dbRef;
     private Calendar calendar = Calendar.getInstance();
     private DateFormat dateFormat;
-    private Uri uri;
+    private Uri uri, filePath;
     private static final int PERMISSION_CALLBACK_CONSTANT = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
     private SharedPreferences permissionStatus;
@@ -59,6 +68,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private String[] permissionsRequired = new String[]{Manifest.permission.READ_CALENDAR,
             Manifest.permission.WRITE_CALENDAR};
     private String foundationName;
+    private StorageReference mStorageRef;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -71,20 +81,22 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         Bundle bundle = getIntent().getExtras();
         foundationName = bundle.getString("foundationName");
-        dbRef = FirebaseDatabase.getInstance().getReference("activities/"+foundationName);
+        dbRef = FirebaseDatabase.getInstance().getReference("activities/" + foundationName);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         findViews();
+        mImage.setOnClickListener(this);
         mCreate.setOnClickListener(this);
 
         checkCalendarPermissions();
 
     }
 
-    private void checkCalendarPermissions(){
-        if(ActivityCompat.checkSelfPermission(CreateActivity.this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
-                ||ActivityCompat.checkSelfPermission(CreateActivity.this, permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(CreateActivity.this, permissionsRequired[0])
-                    ||ActivityCompat.shouldShowRequestPermissionRationale(CreateActivity.this, permissionsRequired[1])){
+    private void checkCalendarPermissions() {
+        if (ActivityCompat.checkSelfPermission(CreateActivity.this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(CreateActivity.this, permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(CreateActivity.this, permissionsRequired[0])
+                    || ActivityCompat.shouldShowRequestPermissionRationale(CreateActivity.this, permissionsRequired[1])) {
 
                 //Show why we need multiple permissions
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateActivity.this);
@@ -106,7 +118,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 });
                 builder.show();
-            }else{
+            } else {
                 ActivityCompat.requestPermissions(CreateActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
             }
 
@@ -134,16 +146,16 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         Event event = new Event(name, date, timeStart, timeEnd, address, desc);
 
         UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
-        utilitiesApplication.addEvent(event,dbRef,id);
+        utilitiesApplication.addEvent(event, dbRef, id);
 
         putToCalendar(name, timeStart, timeEnd, date, address, desc);
-
+        uploadFile(name);
         Toast.makeText(this, "Event successfully added", Toast.LENGTH_SHORT).show();
         finish();
 
     }
 
-    private void putToCalendar(String eventName, String timeStart, String timeEnd, String date, String location, String desc){
+    private void putToCalendar(String eventName, String timeStart, String timeEnd, String date, String location, String desc) {
         int hourStart = 0;
         int hourEnd = 0;
         int minuteStart = 0;
@@ -219,6 +231,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         mTimeEnd = (EditText) findViewById(R.id.edtTimeEnd);
         mAddress = (EditText) findViewById(R.id.edtAddress);
         mDesc = (EditText) findViewById(R.id.edtDescription);
+        mImage = (ImageButton) findViewById(R.id.imageButton);
         mCreate = (Button) findViewById(R.id.createBtn);
     }
 
@@ -238,7 +251,56 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.createBtn:
                 createActivity();
                 break;
+            case R.id.imageButton:
+                showFileChooser();
+                break;
 
+        }
+    }
+
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select an image"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            filePath = data.getData();
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+//                Bitmap resized = Bitmap.createScaledBitmap(bitmap, 250, 250, true);
+                mImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                mImage.setImageBitmap(bitmap);
+                mImage.bringToFront();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void uploadFile(String name) {
+        if (filePath != null) {
+
+            StorageReference riversRef = mStorageRef.child("events/"+name+".jpg");
+
+            riversRef.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+
+                        }
+                    });
         }
     }
 

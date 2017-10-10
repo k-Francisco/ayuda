@@ -36,10 +36,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:focusable="false"
             android:hint="When will your activity happen?"
             android:inputType="date"
-            android:focusable="false"
-            android:onClick="showDatePickerDialog"/>
+            android:onClick="showDatePickerDialog" />
 
         <TextView
             android:layout_width="match_parent"
@@ -52,10 +52,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:focusable="false"
             android:hint="What time will your activity start?"
             android:inputType="time"
-            android:focusable="false"
-            android:onClick="showTimePickerDialog"/>
+            android:onClick="showTimePickerDialog" />
 
         <TextView
             android:layout_width="match_parent"
@@ -68,10 +68,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:focusable="false"
             android:hint="What time will your activity end?"
             android:inputType="time"
-            android:focusable="false"
-            android:onClick="showTimePickerDialog"/>
+            android:onClick="showTimePickerDialog" />
 
         <TextView
             android:layout_width="match_parent"
@@ -112,7 +112,7 @@
             <ImageButton
                 android:id="@+id/imageButton"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="500dp"
                 app:srcCompat="@color/white" />
 
             <TextView
@@ -120,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:clickable="false"
-                android:text="choose an image"></TextView>
+                android:text="choose an image"/>
         </FrameLayout>
 
         <Button
