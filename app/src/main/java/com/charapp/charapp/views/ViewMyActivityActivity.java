@@ -112,18 +112,18 @@ public class ViewMyActivityActivity extends AppCompatActivity
         if (userIdentity.equals("foundation")) {
             fab.show();
             getSupportActionBar().setTitle(getString(R.string.title_activity_view_my_activity));
-            setView(fName);
+            setView();
 
 
         } else if (userIdentity.equals("volunteer")) {
             getSupportActionBar().setTitle(getString(R.string.title_activity_view_activities));
-            setView(fName);
+            setView();
         }
 
 
     }
 
-    private void setView(String key) {
+    private void setView() {
 
         final UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
         viewMyActivity = this;
@@ -155,42 +155,58 @@ public class ViewMyActivityActivity extends AppCompatActivity
         tvDisplayEmail.setText(user.getEmail());
 
         if (userIdentity.equals("foundation")) {
-            mRef = mRef.child(key);
+            mRef = mRef.child(fName);
             mRef.addChildEventListener(childEventListener);
 
         } else {
-            foundations = retrieve();
-            for (int i = 0; i < foundations.size(); i++) {
-                mRef.child(foundations.get(i)).addChildEventListener(childEventListener);
-            }
+//            foundations = retrieve();
+//            for (int i = 0; i < foundations.size(); i++) {
+//                mRef.child(foundations.get(i)).addChildEventListener(childEventListener);
+//            }
+            mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        mRef.child(ds.getKey()).addChildEventListener(childEventListener);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
         }
 
 
         new ViewMyActivityActivity.Wait().execute();
     }
 
-    private ArrayList<String> retrieve() {
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                fetchFoundations(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return foundations;
-    }
-
-    private void fetchFoundations(DataSnapshot dataSnapshot) {
-        foundations.clear();
-        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//    private ArrayList<String> retrieve() {
+//        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                fetchFoundations(dataSnapshot);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//        return foundations;
+//    }
+//
+//    private void fetchFoundations(DataSnapshot dataSnapshot) {
+//        foundations.clear();
+//        for (DataSnapshot ds : dataSnapshot.getChildren()) {
 //            String name = ds.getValue(Foundation.class).getFoundationName();
-            foundations.add(ds.getKey());
-        }
-    }
+//            foundations.add(ds.getKey());
+//        }
+//    }
 
     private void getAllEvents(DataSnapshot dataSnapshot) {
         Event event = dataSnapshot.getValue(Event.class);
