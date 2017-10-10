@@ -33,6 +33,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.charapp.charapp.views.EventDetailsActivity"></activity>
+        <service android:name="com.charapp.charapp.NotificationService"/>
     </application>
 
 </manifest>

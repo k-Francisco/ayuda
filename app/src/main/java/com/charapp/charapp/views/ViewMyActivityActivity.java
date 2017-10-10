@@ -1,5 +1,7 @@
 package com.charapp.charapp.views;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
+import com.charapp.charapp.NotificationService;
 import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.adapter.EventAdapter;
 import com.charapp.charapp.fragments.DatePickerFragment;
@@ -75,6 +79,8 @@ public class ViewMyActivityActivity extends AppCompatActivity
     private TextView tvDisplayName;
     private TextView tvDisplayEmail;
     private Toolbar toolbar;
+    private NotificationCompat.Builder notification;
+    private static final int notifyId = 1;
 
     public ViewMyActivityActivity() {
     }
@@ -120,6 +126,11 @@ public class ViewMyActivityActivity extends AppCompatActivity
             setView();
         }
 
+        Intent notifyIntent = new Intent(this, NotificationService.class);
+        notifyIntent.putExtra("identity", userIdentity);
+        notifyIntent.putExtra("email", userEmail);
+        notifyIntent.putExtra("name", fName);
+        startService(notifyIntent);
 
     }
 
@@ -168,7 +179,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         mRef.child(ds.getKey()).addChildEventListener(childEventListener);
-
                     }
                 }
 
@@ -385,6 +395,22 @@ public class ViewMyActivityActivity extends AppCompatActivity
         super.onDestroy();
         arrayListItem.clear();
         mRef.removeEventListener(childEventListener);
+    }
+
+    public void notifyUser(){
+        notification = ((UtilitiesApplication)getApplication()).getNotification();
+        notification.setSmallIcon(R.drawable.logo_gradient);
+        notification.setTicker("");
+        notification.setWhen(System.currentTimeMillis());
+        notification.setContentTitle("Event");
+        notification.setContentText("A new event has been added");
+
+        Intent intent = new Intent("notify_user");
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(notifyId, notification.build());
     }
 
     public void updateView() {
