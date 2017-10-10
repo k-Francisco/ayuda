@@ -1,7 +1,5 @@
 package com.charapp.charapp.views;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,7 +11,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class ViewMyActivityActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -77,8 +75,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
     private TextView tvDisplayName;
     private TextView tvDisplayEmail;
     private Toolbar toolbar;
-    private NotificationCompat.Builder notification;
-    private static final int notifyId = 1;
 
     public ViewMyActivityActivity() {
     }
@@ -91,16 +87,12 @@ public class ViewMyActivityActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Bundle bundle = getIntent().getExtras();
-
-//        userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
-//        fName = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("name", "");
         userIdentity = bundle.getString("IDENTITY");
         fName = bundle.getString("NAME");
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         userEmail = user.getEmail();
-
         mRef = FirebaseDatabase.getInstance().getReference("activities/");
         mFoundationRef = FirebaseDatabase.getInstance().getReference("foundation");
 
@@ -125,21 +117,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         } else if (userIdentity.equals("volunteer")) {
             getSupportActionBar().setTitle(getString(R.string.title_activity_view_activities));
-
-            mFoundationRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        String key = ds.getValue(Foundation.class).getFoundationName();
-//                        setView(key);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
         }
 
 
@@ -181,7 +158,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         new ViewMyActivityActivity.Wait().execute();
     }
-
 
     private void getAllEvents(DataSnapshot dataSnapshot) {
         Event event = dataSnapshot.getValue(Event.class);
@@ -316,14 +292,39 @@ public class ViewMyActivityActivity extends AppCompatActivity
     ChildEventListener childEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            if(userIdentity.equals("foundation")){
             recyclerView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             Event event;
             event = dataSnapshot.getValue(Event.class);
             arrayListItem.add(event);
             keysArray.add(dataSnapshot.getKey());
-            updateView();
-            notifyUser();
+            updateView();}
+            else {
+
+                mFoundationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        recyclerView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
+                        Event event;
+
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            String key = ds.getValue(Foundation.class).getFoundationName();
+                            event = dataSnapshot.getValue(Event.class);
+                            arrayListItem.add(event);
+                            keysArray.add(key);
+                        }
+                        updateView();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
         }
 
         @Override
@@ -355,22 +356,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
             adapter.notifyDataSetChanged();
         }
     };
-
-    public void notifyUser(){
-        notification = ((UtilitiesApplication)getApplication()).getNotification();
-        notification.setSmallIcon(R.drawable.logo_gradient);
-        notification.setTicker("");
-        notification.setWhen(System.currentTimeMillis());
-        notification.setContentTitle("Event");
-        notification.setContentText("A new event has been added");
-
-        Intent intent = new Intent("notify_user");
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(notifyId, notification.build());
-    }
 
     @Override
     public void onDestroy() {

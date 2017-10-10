@@ -1,19 +1,12 @@
 package com.charapp.charapp.ViewHolder;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -24,20 +17,9 @@ import android.widget.Toast;
 
 import com.charapp.ayuda.R;
 import com.charapp.charapp.Utilities.UtilitiesApplication;
-import com.charapp.charapp.fragments.DatePickerFragment;
-import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
-import com.charapp.charapp.views.CreateActivity;
-
 import com.charapp.charapp.views.ViewMyActivityActivity;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventViewHolder extends RecyclerView.ViewHolder {
@@ -52,7 +34,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     private int position;
     private String identity;
     UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
-    DatabaseReference dbRef;
 
 
     public EventViewHolder(final Context context, final View itemView, final List<Event> eventObject, String identity) {
@@ -69,12 +50,26 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        dbRef = FirebaseDatabase.getInstance().getReference("activities");
-
 
         tvName = (TextView) itemView.findViewById(R.id.eventName);
         tvDate = (TextView) itemView.findViewById(R.id.eventDate);
         tvDesc = (TextView) itemView.findViewById(R.id.eventDesc);
+
+        tvViewMore = (TextView) itemView.findViewById(R.id.tvViewMore);
+        LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.lLayoutFoundation);
+
+        if(identity.equals("foundation")){
+            tvViewMore.setVisibility(View.INVISIBLE);
+        }else if(identity.equals("volunteer")){
+            ll.setVisibility(View.GONE);
+        }
+
+        tvViewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "insert 'view more' actions here", Toast.LENGTH_LONG).show();
+            }
+        });
 
         mViewIcon = (ImageView) itemView.findViewById(R.id.ivView);
         mEditICon = (ImageView) itemView.findViewById(R.id.ivEdit);
@@ -160,14 +155,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         });
 
 
-
-        if(identity.equals("foundation")){
-            tvViewMore = (TextView) itemView.findViewById(R.id.tvViewMore);
-            tvViewMore.setVisibility(View.INVISIBLE);
-        }else if(identity.equals("volunteer")){
-            LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.lLayoutFoundation);
-            ll.setVisibility(View.GONE);
-        }
 
 
 
