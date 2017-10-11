@@ -142,9 +142,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         final String userEmail = email.getText().toString();
         final String userPass = password.getText().toString();
 
-        progressDialog.setMessage("Logging in");
-        progressDialog.show();
-        progressDialog.setCancelable(false);
+        try{
+            progressDialog.setMessage("Logging in");
+            progressDialog.show();
+            progressDialog.setCancelable(false);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         try {
             mAuth.signInWithEmailAndPassword(userEmail, userPass)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

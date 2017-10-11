@@ -27,7 +27,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
 
     public View mCardView;
     public TextView tvName, tvDate, tvDesc, tvViewMore;
-    public ImageView mViewIcon, mDeleteIcon, mEditICon;
+    public ImageView mViewIcon, mDeleteIcon, mEditICon, mImgCoverPhoto;
     public EditText mName, mDate, mStart, mEnd, mAddress, mDesc;
     private List<Event> eventObject;
     private Context context;
@@ -54,6 +54,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         tvName = (TextView) itemView.findViewById(R.id.eventName);
         tvDate = (TextView) itemView.findViewById(R.id.eventDate);
         tvDesc = (TextView) itemView.findViewById(R.id.eventDesc);
+        mImgCoverPhoto = itemView.findViewById(R.id.card_img);
 
         tvViewMore = (TextView) itemView.findViewById(R.id.tvViewMore);
         LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.lLayoutFoundation);
@@ -112,7 +113,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                 LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View mView = mInflater.inflate(R.layout.update_event, null);
-                alertDialog.setTitle("Edit event...");
+                alertDialog.setTitle("EDIT EVENT");
 
                 mName = (EditText) mView.findViewById(R.id.edtActivityName);
                 mDate = (EditText) mView.findViewById(R.id.edtDate);

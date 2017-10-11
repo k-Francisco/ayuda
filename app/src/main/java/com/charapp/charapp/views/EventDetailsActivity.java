@@ -19,7 +19,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         headerInfo = (TextView) findViewById(R.id.mTxtHeaderInfo);
         tvName = (TextView) findViewById(R.id.mTxtCardTitle1);

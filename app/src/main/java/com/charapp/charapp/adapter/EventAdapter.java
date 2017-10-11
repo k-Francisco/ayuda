@@ -11,6 +11,7 @@ import com.charapp.charapp.ViewHolder.EventViewHolder;
 import com.charapp.charapp.models.Event;
 
 import java.util.List;
+import java.util.Random;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
@@ -27,7 +28,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     @Override
     public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         EventViewHolder viewHolder;
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activities_card_layout, parent, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activities_card_layout_2, parent, false);
         viewHolder = new EventViewHolder(context, layoutView, eventsList, identity);
 
         return viewHolder;
@@ -41,6 +42,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.tvDate.setText(eventsList.get(position).getDate());
         holder.tvDesc.setText(eventsList.get(position).getDescription());
 
+        Random rand = new Random();
+        int  n = rand.nextInt(4) + 1;
+        switch (n){
+            case 1:
+             holder.mImgCoverPhoto.setImageResource(R.drawable.img_helping_hand_1);
+                break;
+            case 2:
+                holder.mImgCoverPhoto.setImageResource(R.drawable.img_helping_hand_2);
+                break;
+            case 3:
+                holder.mImgCoverPhoto.setImageResource(R.drawable.img_helping_hand_3);
+                break;
+            case 4:
+                holder.mImgCoverPhoto.setImageResource(R.drawable.img_helping_hand_4);
+                break;
+        }
     }
 
     @Override

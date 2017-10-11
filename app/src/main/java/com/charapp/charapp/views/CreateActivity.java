@@ -76,7 +76,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
 
-        getSupportActionBar().setTitle(getString(R.string.title_create_activity));
+        getSupportActionBar().setTitle("AYUDA");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle bundle = getIntent().getExtras();

@@ -159,6 +159,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         View header = navigationView.getHeaderView(0);
         tvDisplayName = header.findViewById(R.id.tvName);
         tvDisplayName.setText(fName);
@@ -281,14 +282,15 @@ public class ViewMyActivityActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+//        } else
+            if (id == R.id.nav_profile) {
+            startActivity(new Intent(ViewMyActivityActivity.this, VolunteerProfileActivity.class));
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
 
@@ -397,8 +399,8 @@ public class ViewMyActivityActivity extends AppCompatActivity
         mRef.removeEventListener(childEventListener);
     }
 
-    public void notifyUser(){
-        notification = ((UtilitiesApplication)getApplication()).getNotification();
+    public void notifyUser() {
+        notification = ((UtilitiesApplication) getApplication()).getNotification();
         notification.setSmallIcon(R.drawable.logo_gradient);
         notification.setTicker("");
         notification.setWhen(System.currentTimeMillis());
