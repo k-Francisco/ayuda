@@ -36,7 +36,7 @@
         <activity android:name="com.charapp.charapp.views.EventDetailsActivity"
             android:label="AYUDA"
             android:theme="@style/TransparentStatusBar"/>
-        <service android:name="com.charapp.charapp.NotificationService"/>
+        <service android:name="com.charapp.charapp.service.NotificationService"/>
     </application>
 
 </manifest>

@@ -1,6 +1,6 @@
 package com.charapp.charapp.models;
 
-import java.util.ArrayList;
+
 
 /**
  * Created by dobit on 9/27/2017.
@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class Foundation {
     private String foundationName;
     private String foundationEmail;
-    private ArrayList<Event> events;
 
     public Foundation() {
     }
@@ -19,11 +18,6 @@ public class Foundation {
         this.foundationEmail = foundationEmail;
     }
 
-    public Foundation(String foundationName, String foundationEmail, ArrayList<Event> events) {
-        this.foundationName = foundationName;
-        this.foundationEmail = foundationEmail;
-        this.events = events;
-    }
 
     public String getFoundationName() {
         return foundationName;
@@ -41,11 +35,4 @@ public class Foundation {
         this.foundationEmail = foundationEmail;
     }
 
-    public ArrayList<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(ArrayList<Event> events) {
-        this.events = events;
-    }
 }

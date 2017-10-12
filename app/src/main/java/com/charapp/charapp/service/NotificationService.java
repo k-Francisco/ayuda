@@ -1,4 +1,4 @@
-package com.charapp.charapp;
+package com.charapp.charapp.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

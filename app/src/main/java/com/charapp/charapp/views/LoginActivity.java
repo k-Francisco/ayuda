@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
-import com.charapp.charapp.NotificationService;
 import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.models.Foundation;
 import com.charapp.charapp.models.Volunteer;

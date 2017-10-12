@@ -14,9 +14,21 @@ public class Event {
     private String address;
     private String description;
     private Foundation foundation;
-//    private List<Volunteer> volunteers;
+    private List<Volunteer> volunteers;
 
     public Event() {
+    }
+
+
+    public Event(String activityName, String date, String timeStart, String timeEnd, String address, String description, Foundation foundation, List<Volunteer> volunteers) {
+        this.activityName = activityName;
+        this.date = date;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.address = address;
+        this.description = description;
+        this.foundation = foundation;
+        this.volunteers = volunteers;
     }
 
     public Event(String activityName, String date, String timeStart, String timeEnd, String address, String description, Foundation foundation) {
