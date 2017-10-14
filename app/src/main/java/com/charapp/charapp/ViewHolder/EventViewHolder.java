@@ -32,7 +32,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     private List<Event> eventObject;
     private Context context;
     private int position;
-    private String identity;
+    private String identity, testName;
     UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
 
 
@@ -75,8 +75,8 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
                 bundle.putString("END", eventObject.get(position).getTimeEnd());
                 bundle.putString("ADDRESS", eventObject.get(position).getAddress());
                 bundle.putString("DESC", eventObject.get(position).getDescription());
-
-                ViewMyActivityActivity.getInstance().viewEvent(bundle, position);            }
+                ViewMyActivityActivity.getInstance().viewEvent(bundle, position);
+            }
         });
 
         mViewIcon = (ImageView) itemView.findViewById(R.id.ivView);

@@ -49,6 +49,7 @@ public class SplashActivity extends AppCompatActivity {
         userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
         fName = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("name", "");
 
+
         if(!userEmail.equals("") && !userPassword.equals("") && !userIdentity.equals("") && !fName.equals("")){
             Intent intent = new Intent(SplashActivity.this, ViewMyActivityActivity.class);
             intent.putExtra("IDENTITY", userIdentity);

@@ -34,6 +34,7 @@ import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.fragments.DatePickerFragment;
 import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
+import com.charapp.charapp.models.Volunteer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -46,8 +47,10 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -69,6 +72,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             Manifest.permission.WRITE_CALENDAR};
     private String foundationName;
     private StorageReference mStorageRef;
+    private List<Volunteer> volunteerList = new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -143,7 +147,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         String address = mAddress.getText().toString();
         String desc = mDesc.getText().toString();
 
-        Event event = new Event(name, date, timeStart, timeEnd, address, desc);
+
+
+//        Event event = new Event(name, date, timeStart, timeEnd, address, desc);
+        Event event = new Event(name,date,timeStart,timeEnd,address,desc,volunteerList);
 
         UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
         utilitiesApplication.addEvent(event, dbRef, id);

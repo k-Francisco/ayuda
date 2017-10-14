@@ -84,9 +84,7 @@ public class UtilitiesApplication extends Application {
     public void addEvent(Event event, DatabaseReference databaseReference, String id){
         databaseReference.child(id).setValue(event);
     }
-    public void addEvent(Foundation foundation, DatabaseReference databaseReference, String id){
-        databaseReference.child(id).setValue(foundation);
-    }
+
 
     public void deleteEvent(DataSnapshot dataSnapshot, DatabaseReference dbRef, Context context, EventAdapter adapter){
         //TODO deletion of event here including deletion of Firebase event entry

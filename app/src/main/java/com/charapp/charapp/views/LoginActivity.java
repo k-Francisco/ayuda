@@ -86,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     if (mEmail != null && mEmail.equals(userEmail)) {
                         userIdentity = "foundation";
+
                         ((UtilitiesApplication)getApplication()).getEditor().putString("identity", userIdentity);
                         ((UtilitiesApplication)getApplication()).getEditor().putString("name", ds.getValue(Foundation.class).getFoundationName());
                         ((UtilitiesApplication)getApplication()).getEditor().commit();

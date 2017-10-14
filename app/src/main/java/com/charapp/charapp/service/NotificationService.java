@@ -30,6 +30,7 @@ public class NotificationService extends Service {
     private ChildEventListener childEventListener;
     private String userIdentity;
     private String fName;
+    private boolean fromIntent;
 
 
     @Nullable
@@ -42,8 +43,8 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         mRef = FirebaseDatabase.getInstance().getReference("activities/");
 
-        userIdentity = intent.getStringExtra("identity");
-        fName = intent.getStringExtra("name");
+        userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
+        fName = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("name", "");
 
         childEventListener = new ChildEventListener() {
             @Override
@@ -99,19 +100,21 @@ public class NotificationService extends Service {
     }
 
     public void notifyUser(){
-        notification = ((UtilitiesApplication)getApplication()).getNotification();
-        notification.setSmallIcon(R.drawable.logo_gradient);
-        notification.setTicker("");
-        notification.setWhen(System.currentTimeMillis());
-        notification.setContentTitle("Event");
-        notification.setContentText("A new event has been added");
 
-        Intent intent = new Intent("notify_user");
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setContentIntent(pendingIntent);
+            notification = ((UtilitiesApplication) getApplication()).getNotification();
+            notification.setSmallIcon(R.drawable.logo_gradient);
+            notification.setTicker("");
+            notification.setWhen(System.currentTimeMillis());
+            notification.setContentTitle("Event");
+            notification.setContentText("A new event has been added");
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(notifyId, notification.build());
+            Intent intent = new Intent("notify_user");
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            notification.setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(notifyId, notification.build());
+
     }
 
     @Override
