@@ -31,6 +31,7 @@ public class UtilitiesApplication extends Application {
     private SharedPreferences sharedpreferences;
     private SharedPreferences.Editor editor;
     private NotificationCompat.Builder notification;
+    private int cardPosition;
 
 
     @Override
@@ -43,6 +44,13 @@ public class UtilitiesApplication extends Application {
         notification.setAutoCancel(true);
     }
 
+    public int getCardPosition() {
+        return cardPosition;
+    }
+
+    public void setCardPosition(int cardPosition) {
+        this.cardPosition = cardPosition;
+    }
 
     public NotificationCompat.Builder getNotification() {
         return notification;

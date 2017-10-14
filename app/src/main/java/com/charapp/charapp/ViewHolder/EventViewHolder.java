@@ -20,6 +20,9 @@ import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.models.Event;
 import com.charapp.charapp.views.ViewMyActivityActivity;
 
+
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
 
 public class EventViewHolder extends RecyclerView.ViewHolder {
@@ -33,7 +36,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     private Context context;
     private int position;
     private String identity, testName;
-    UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
 
 
     public EventViewHolder(final Context context, final View itemView, final List<Event> eventObject, String identity) {
@@ -42,13 +44,14 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         this.eventObject = eventObject;
         this.identity = identity;
 
+
         mCardView = (CardView) itemView.findViewById(R.id.card_view);
-        mCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                position = (int) view.getTag();
-            }
-        });
+//        mCardView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                position = (int) view.getTag();
+//            }
+//        });
 
 
         tvName = (TextView) itemView.findViewById(R.id.eventName);
@@ -68,6 +71,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         tvViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                position = (int) view.getTag();
                 Bundle bundle = new Bundle();
                 bundle.putString("NAME", eventObject.get(position).getActivityName());
                 bundle.putString("DATE", eventObject.get(position).getDate());
@@ -162,13 +166,13 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-
-
-
-
-
-
     }
+
+    @Subscribe
+    public void onEvent(int cardPosition){
+        position = cardPosition;
+    }
+
 
 
     private boolean validateForm() {

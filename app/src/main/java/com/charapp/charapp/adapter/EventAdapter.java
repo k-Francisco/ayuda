@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.charapp.ayuda.R;
+import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.ViewHolder.EventViewHolder;
 import com.charapp.charapp.models.Event;
+
 
 import java.util.List;
 import java.util.Random;
@@ -18,6 +20,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private List<Event> eventsList;
     private Context context;
     private String identity;
+    UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
+
 
     public EventAdapter(Context context, List<Event> eventsList, String identity) {
         this.eventsList = eventsList;
@@ -30,7 +34,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         EventViewHolder viewHolder;
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activities_card_layout_2, parent, false);
         viewHolder = new EventViewHolder(context, layoutView, eventsList, identity);
-
         return viewHolder;
     }
 
@@ -38,6 +41,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     @Override
     public void onBindViewHolder(final EventViewHolder holder, int position) {
         holder.mCardView.setTag(position);
+        holder.tvViewMore.setTag(position);
         holder.tvName.setText(eventsList.get(position).getActivityName());
         holder.tvDate.setText(eventsList.get(position).getDate());
         holder.tvDesc.setText(eventsList.get(position).getDescription());

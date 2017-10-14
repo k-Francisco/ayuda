@@ -28,6 +28,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     Button btnJoin;
     DatabaseReference eventRef;
     Query query;
+    int position;
 
 
     @Override
@@ -35,8 +36,6 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        EventBus.getDefault().register(this); //Register the bus first to the activity
 
         userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
 
@@ -69,6 +68,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     }
 
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -79,15 +79,10 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         return super.onOptionsItemSelected(item);
     }
 
-    @Subscribe      //EventBus method
-    public void onEvent(String test){//Variable from listeners or async methods should be placed here
-        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onClick(View view) {
         //TODO update List<Volunteers> in an event
-        Toast.makeText(this, mName, Toast.LENGTH_SHORT).show();
+;
 
     }
 }

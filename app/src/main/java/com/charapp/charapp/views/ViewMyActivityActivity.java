@@ -43,6 +43,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +85,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
     private Toolbar toolbar;
     private NotificationCompat.Builder notification;
     private static final int notifyId = 1;
+    private int position;
 
     public ViewMyActivityActivity() {
     }
@@ -126,6 +131,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
             setView();
         }
 
+
         Intent notifyIntent = new Intent(this, NotificationService.class);
         notifyIntent.putExtra("identity", userIdentity);
         notifyIntent.putExtra("email", userEmail);
@@ -133,6 +139,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
         startService(notifyIntent);
 
     }
+
 
     private void setView() {
 
@@ -171,6 +178,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
             mRef.addChildEventListener(childEventListener);
 
         } else {
+
 //            foundations = retrieve();
 //            for (int i = 0; i < foundations.size(); i++) {
 //                mRef.child(foundations.get(i)).addChildEventListener(childEventListener);
