@@ -150,7 +150,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
 
 //        Event event = new Event(name, date, timeStart, timeEnd, address, desc);
-        Event event = new Event(name,date,timeStart,timeEnd,address,desc,volunteerList);
+        Event event = new Event(name,date,timeStart,timeEnd,address,desc,foundationName);
 
         UtilitiesApplication utilitiesApplication = new UtilitiesApplication();
         utilitiesApplication.addEvent(event, dbRef, id);

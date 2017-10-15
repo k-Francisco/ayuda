@@ -183,6 +183,7 @@ public class ViewMyActivityActivity extends AppCompatActivity
 //            for (int i = 0; i < foundations.size(); i++) {
 //                mRef.child(foundations.get(i)).addChildEventListener(childEventListener);
 //            }
+
             mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -300,8 +301,6 @@ public class ViewMyActivityActivity extends AppCompatActivity
             if (id == R.id.nav_profile) {
             startActivity(new Intent(ViewMyActivityActivity.this, VolunteerProfileActivity.class));
         } else if (id == R.id.nav_logout) {
-            mAuth.signOut();
-
             ((UtilitiesApplication) getApplication()).getEditor().clear();
             ((UtilitiesApplication) getApplication()).getEditor().commit();
 

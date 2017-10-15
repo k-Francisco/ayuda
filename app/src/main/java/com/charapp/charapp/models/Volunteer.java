@@ -8,6 +8,14 @@ public class Volunteer {
     private String volunteerName;
     private String volunteerEmail;
 
+    public Volunteer() {
+    }
+
+    public Volunteer(String volunteerName, String volunteerEmail) {
+        this.volunteerName = volunteerName;
+        this.volunteerEmail = volunteerEmail;
+    }
+
     public String getVolunteerName() {
         return volunteerName;
     }

@@ -73,12 +73,14 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View view) {
                 position = (int) view.getTag();
                 Bundle bundle = new Bundle();
+                bundle.putString("FNAME", eventObject.get(position).getFoundationName());
                 bundle.putString("NAME", eventObject.get(position).getActivityName());
                 bundle.putString("DATE", eventObject.get(position).getDate());
                 bundle.putString("START", eventObject.get(position).getTimeStart());
                 bundle.putString("END", eventObject.get(position).getTimeEnd());
                 bundle.putString("ADDRESS", eventObject.get(position).getAddress());
                 bundle.putString("DESC", eventObject.get(position).getDescription());
+                bundle.putInt("position",position);
                 ViewMyActivityActivity.getInstance().viewEvent(bundle, position);
             }
         });
