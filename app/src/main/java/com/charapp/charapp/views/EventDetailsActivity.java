@@ -35,11 +35,14 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     DatabaseReference eventRef, mRef, volunteerRef;
     Query query;
     int position;
+    int volunteerPosition;
     List<String> fKeys = new ArrayList<>();
     List<String> eventKeys = new ArrayList<>();
+    List<String> volunteerKeys = new ArrayList<>();
     boolean checker = false;
     List<Event> events = new ArrayList<>();
     List<Volunteer> volunteers;
+    List<Volunteer> volunteerRecords = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +95,26 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
 
             }
         });
+
+        volunteerRef = FirebaseDatabase.getInstance().getReference("volunteer");
+        volunteerRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                    Volunteer volunteer = ds.getValue(Volunteer.class);
+                    volunteerRecords.add(volunteer);
+                    volunteerKeys.add(ds.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
 
@@ -115,6 +138,27 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                 events.get(position).getDate(),events.get(position).getTimeStart(),
                 events.get(position).getTimeEnd(),events.get(position).getAddress(),
                 events.get(position).getDescription(), volunteers, events.get(position).getFoundationName());
+
+        Event eventJoined = new Event(events.get(position).getActivityName(),
+                events.get(position).getDate(),events.get(position).getTimeStart(),
+                events.get(position).getTimeEnd(),events.get(position).getAddress(),
+                events.get(position).getDescription(),events.get(position).getFoundationName());
+
+        //TODO update volunteer's joined activities
+        for (int i = 0; i < volunteerRecords.size(); i++) {
+            if(volunteerRecords.get(i).getVolunteerEmail().equals(volunteerEmail)){
+                volunteerPosition = i;
+                if(volunteerRecords.get(i).getEventsJoined() != null){
+                    volunteerRecords.get(i).getEventsJoined().add(eventJoined);
+                }else{
+                    volunteerRecords.get(i).setEventsJoined(new ArrayList<Event>());
+                    volunteerRecords.get(i).getEventsJoined().add(eventJoined);
+                }
+            }
+        }
+
+        volunteerRef = volunteerRef.child(volunteerKeys.get(volunteerPosition));
+        volunteerRef.setValue(volunteerRecords.get(volunteerPosition));
 
         eventRef = eventRef.child(foundationName).child(eventKeys.get(position));
         eventRef.setValue(event);
