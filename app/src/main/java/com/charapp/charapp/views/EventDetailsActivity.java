@@ -1,6 +1,17 @@
 package com.charapp.charapp.views;
 
+import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +34,12 @@ import com.google.firebase.database.ValueEventListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class EventDetailsActivity extends AppCompatActivity implements View.OnClickListener {
@@ -43,12 +59,23 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     List<Event> events = new ArrayList<>();
     List<Volunteer> volunteers;
     List<Volunteer> volunteerRecords = new ArrayList<>();
+    private Calendar calendar = Calendar.getInstance();
+    private DateFormat dateFormat;
+    private Uri uri;
+    private static final int PERMISSION_CALLBACK_CONSTANT = 100;
+    private static final int REQUEST_PERMISSION_SETTING = 101;
+    private SharedPreferences permissionStatus;
+    private boolean sentToSettings = false;
+    private String[] permissionsRequired = new String[]{Manifest.permission.READ_CALENDAR,
+            Manifest.permission.WRITE_CALENDAR};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        checkCalendarPermissions();
         userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
 
         headerInfo = (TextView) findViewById(R.id.mTxtHeaderInfo);
@@ -66,6 +93,8 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         mAddress = bundle.getString("ADDRESS");
         mDesc = bundle.getString("DESC");
         position = bundle.getInt("position");
+
+
 
         headerInfo.setText(foundationName+"|"+mDate);
         tvName.setText(mName);
@@ -118,9 +147,106 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     }
 
 
+    private void putToCalendar(String eventName, String timeStart, String timeEnd, String date, String location, String desc) {
+        int hourStart = 0;
+        int hourEnd = 0;
+        int minuteStart = 0;
+        int minuteEnd = 0;
+        int monthNumber;
+        int monthDay;
+        int year;
+        String[] splitDate;
+        String[] splitTime;
+        String eventStart;
+        String eventEnd;
+        long startTime;
+        long endTime;
+        dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date parseStart = new Date();
+        Date parseEnd = new Date();
+        ContentResolver contentResolver = this.getContentResolver();
+        ContentValues contentValues = new ContentValues();
+
+        splitTime = timeStart.split(":");
+        hourStart = Integer.parseInt(splitTime[0]);
+        minuteStart = Integer.parseInt(splitTime[1]);
+
+        splitDate = date.split("/");
+        monthNumber = Integer.parseInt(splitDate[0]);
+        monthDay = Integer.parseInt(splitDate[1]);
+        year = Integer.parseInt(splitDate[2]);
+
+        eventStart = (year + "/" + monthNumber + "/" + monthDay + " " + hourStart + ":" + minuteStart + ":" + "00");
+        eventEnd = (year + "/" + monthNumber + "/" + monthDay + " " + hourEnd + ":" + minuteStart + ":" + "00");
+
+        try {
+            parseStart = dateFormat.parse(eventStart);
+            parseEnd = dateFormat.parse(eventEnd);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        startTime = parseStart.getTime();
+        endTime = parseEnd.getTime();
+
+        contentValues.put(CalendarContract.Events.CALENDAR_ID, 1);
+        contentValues.put(CalendarContract.Events.DTSTART, startTime);
+        contentValues.put(CalendarContract.Events.DTEND, endTime);
+        contentValues.put(CalendarContract.Events.TITLE, eventName);
+        contentValues.put(CalendarContract.Events.DESCRIPTION, desc);
+        contentValues.put(CalendarContract.Events.EVENT_LOCATION, location);
+        contentValues.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, contentValues);
+
+    }
+
+    private void checkCalendarPermissions() {
+        if (ActivityCompat.checkSelfPermission(EventDetailsActivity.this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(EventDetailsActivity.this, permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(EventDetailsActivity.this, permissionsRequired[0])
+                    || ActivityCompat.shouldShowRequestPermissionRationale(EventDetailsActivity.this, permissionsRequired[1])) {
+
+                //Show why we need multiple permissions
+                AlertDialog.Builder builder = new AlertDialog.Builder(EventDetailsActivity.this);
+                builder.setTitle("Need Multiple Permissions");
+                builder.setMessage("This app needs Calendar permissions");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                        ActivityCompat.requestPermissions(EventDetailsActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+
+                    }
+                });
+                builder.show();
+            } else {
+                ActivityCompat.requestPermissions(EventDetailsActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+            }
+
+            permissionStatus = getSharedPreferences("permissions", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = permissionStatus.edit();
+            editor.putBoolean(permissionsRequired[0], true);
+            editor.commit();
+        }
+    }
+
+
     @Override
     public void onClick(View view) {
-        //TODO update List<Volunteers> in an event
+        putToCalendar(mName,mStart,mEnd,mDate,mAddress,mDesc);
 
         String volunteerEmail = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("email", "");
         String volunteerName = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("name", "");
