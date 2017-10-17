@@ -129,6 +129,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public void userIsVolunteerOrFoundation(View view) {
         int radioButtonId = radioGroup.getCheckedRadioButtonId();
+        switch (radioButtonId){
+            case R.id.rbtnTestFoundation:
+                fullName.setHint("Foundation Name");
+                break;
+            case R.id.rbtnTestVolunteer:
+                fullName.setHint("Full Name");
+                break;
+        }
         radioButton = (RadioButton) findViewById(radioButtonId);
         userIdentity = radioButton.getText().toString();
     }
