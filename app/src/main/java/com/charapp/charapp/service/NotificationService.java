@@ -26,12 +26,15 @@ import com.google.firebase.database.ValueEventListener;
 public class NotificationService extends Service {
     private NotificationCompat.Builder notification;
     private static final int notifyId = 1;
+    private static final int notifyFoundationId = 2;
     private DatabaseReference mRef;
     private ChildEventListener childEventListener;
+    private ValueEventListener valueEventListener;
     private String userIdentity;
     private String fName;
+    private String email;
     private boolean fromIntent;
-
+    private String eventName;
 
     @Nullable
     @Override
@@ -41,10 +44,16 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        fromIntent = intent.getExtras().getBoolean("fromVolunteer");
+
+
         mRef = FirebaseDatabase.getInstance().getReference("activities/");
 
+        email = (String) intent.getExtras().get("email");
+        eventName = (String) intent.getExtras().get("eventName");
         userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
         fName = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("name", "");
+
 
         childEventListener = new ChildEventListener() {
             @Override
@@ -54,7 +63,11 @@ public class NotificationService extends Service {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                if(userIdentity.equals("foundation")){
+                    if(fromIntent){
+                        notifyFoundation();
+                    }
+                }
             }
 
             @Override
@@ -71,11 +84,27 @@ public class NotificationService extends Service {
 
             }
         };
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(userIdentity.equals("foundation")){
+                    if(fromIntent){
+                        notifyFoundation();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
 
         if (userIdentity.equals("foundation")) {
             mRef = mRef.child(fName);
             mRef.addChildEventListener(childEventListener);
-            notifyUser();
+            mRef.addValueEventListener(valueEventListener);
+//            notifyUser();
 
         } else {
             mRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -97,6 +126,22 @@ public class NotificationService extends Service {
         }
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void notifyFoundation(){
+        notification = ((UtilitiesApplication) getApplication()).getNotification();
+        notification.setSmallIcon(R.drawable.logo_gradient);
+        notification.setTicker("");
+        notification.setWhen(System.currentTimeMillis());
+        notification.setContentTitle("Event");
+        notification.setContentText(email+" has joined "+eventName);
+
+        Intent intent = new Intent("notify_foundation");
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(notifyFoundationId, notification.build());
     }
 
     public void notifyUser(){

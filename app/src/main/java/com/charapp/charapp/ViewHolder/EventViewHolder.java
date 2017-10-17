@@ -18,11 +18,21 @@ import android.widget.Toast;
 import com.charapp.ayuda.R;
 import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.models.Event;
+import com.charapp.charapp.models.Volunteer;
 import com.charapp.charapp.views.ViewMyActivityActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventViewHolder extends RecyclerView.ViewHolder {
@@ -46,12 +56,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
 
 
         mCardView = (CardView) itemView.findViewById(R.id.card_view);
-//        mCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                position = (int) view.getTag();
-//            }
-//        });
+
 
 
         tvName = (TextView) itemView.findViewById(R.id.eventName);
@@ -72,6 +77,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 position = (int) view.getTag();
+
                 Bundle bundle = new Bundle();
                 bundle.putString("FNAME", eventObject.get(position).getFoundationName());
                 bundle.putString("NAME", eventObject.get(position).getActivityName());
@@ -169,13 +175,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         });
 
     }
-
-    @Subscribe
-    public void onEvent(int cardPosition){
-        position = cardPosition;
-    }
-
-
 
     private boolean validateForm() {
         boolean valid = true;

@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -23,6 +24,9 @@ import com.charapp.ayuda.R;
 import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.models.Event;
 import com.charapp.charapp.models.Volunteer;
+import com.charapp.charapp.service.NotificationService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -69,11 +73,20 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     private String[] permissionsRequired = new String[]{Manifest.permission.READ_CALENDAR,
             Manifest.permission.WRITE_CALENDAR};
 
+    private boolean hasJoined = false;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private String volunteerEmail;
+    private boolean notifyFoundation = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
 
         checkCalendarPermissions();
         userIdentity = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("identity", "");
@@ -94,6 +107,8 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         mDesc = bundle.getString("DESC");
         position = bundle.getInt("position");
 
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
 
         headerInfo.setText(foundationName+"|"+mDate);
@@ -104,6 +119,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
 
         if(userIdentity.equals("volunteer")){
             btnJoin.setVisibility(View.VISIBLE);
+            volunteerEmail = user.getEmail();
         }
 
 
@@ -135,6 +151,28 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                     volunteerRecords.add(volunteer);
                     volunteerKeys.add(ds.getKey());
                 }
+
+                for (int i = 0; i < volunteerRecords.size(); i++) {
+                    if(volunteerRecords.get(i).getVolunteerEmail().equals(volunteerEmail)){
+                        if(volunteerRecords.get(i).getEventsJoined() != null){
+
+                            for (int j = 0; j < volunteerRecords.get(i).getEventsJoined().size(); j++) {
+                                if(volunteerRecords.get(i).getEventsJoined().get(j).getActivityName().equals(mName)){
+                                    hasJoined = true;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                if(hasJoined){
+                    btnJoin.setEnabled(false);
+                    btnJoin.setText("You have already joined this event");
+                }else{
+
+                }
+
             }
 
             @Override
@@ -142,6 +180,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
 
             }
         });
+
 
 
     }
@@ -246,6 +285,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View view) {
+
         putToCalendar(mName,mStart,mEnd,mDate,mAddress,mDesc);
 
         String volunteerEmail = ((UtilitiesApplication)getApplication()).getSharedpreferences().getString("email", "");
@@ -290,6 +330,16 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         eventRef.setValue(event);
 
         Toast.makeText(this, "Successfully joined an event!", Toast.LENGTH_SHORT).show();
+
+
+        Intent notifyIntent = new Intent(this, NotificationService.class);
+        notifyFoundation = true;
+        notifyIntent.putExtra("email", user.getEmail());
+        notifyIntent.putExtra("eventName", mName);
+        notifyIntent.putExtra("fromVolunteer", notifyFoundation);
+        startService(notifyIntent);
+
+
         finish();
 
     }
