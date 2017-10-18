@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.charapp.ayuda.R;
-import com.charapp.charapp.service.NotificationService;
 import com.charapp.charapp.Utilities.UtilitiesApplication;
 import com.charapp.charapp.adapter.EventAdapter;
 import com.charapp.charapp.fragments.DatePickerFragment;
@@ -34,6 +33,7 @@ import com.charapp.charapp.fragments.TimePickerFragment;
 import com.charapp.charapp.models.Event;
 import com.charapp.charapp.models.Foundation;
 import com.charapp.charapp.models.Volunteer;
+import com.charapp.charapp.service.NotificationService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -298,8 +298,11 @@ public class ViewMyActivityActivity extends AppCompatActivity
 //        } else if (id == R.id.nav_slideshow) {
 
 //        } else
-            if (id == R.id.nav_profile) {
-            startActivity(new Intent(ViewMyActivityActivity.this, VolunteerProfileActivity.class));
+        if (id == R.id.nav_profile) {
+            Intent intent = new Intent(ViewMyActivityActivity.this, VolunteerProfileActivity.class);
+            intent.putExtra("NAME", fName);
+            intent.putExtra("EMAIL", user.getEmail());
+            startActivity(intent);
         } else if (id == R.id.nav_logout) {
             ((UtilitiesApplication) getApplication()).getEditor().clear();
             ((UtilitiesApplication) getApplication()).getEditor().commit();
